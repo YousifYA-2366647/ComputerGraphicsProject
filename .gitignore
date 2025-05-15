@@ -31,4 +31,7 @@
 *.out
 *.app
 
+
 RollerCoaster/.vs/
+RollerCoaster/x64/
+RollerCoaster/RollerCoaster/
