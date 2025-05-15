@@ -1,0 +1,105 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\vertexShader.vert||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|solutionrelative:vertexShader.vert||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\fragmentShader.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|solutionrelative:fragmentShader.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\Shader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|solutionrelative:Shader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\Shader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{42EF286D-6A1A-4A80-A399-77AA1BB1C8FB}|RollerCoaster.vcxproj|solutionrelative:Shader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "fragmentShader.frag",
+              "DocumentMoniker": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\fragmentShader.frag",
+              "RelativeDocumentMoniker": "fragmentShader.frag",
+              "ToolTip": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\fragmentShader.frag",
+              "RelativeToolTip": "fragmentShader.frag",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-05-13T20:13:14.255Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "vertexShader.vert",
+              "DocumentMoniker": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\vertexShader.vert",
+              "RelativeDocumentMoniker": "vertexShader.vert",
+              "ToolTip": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\vertexShader.vert",
+              "RelativeToolTip": "vertexShader.vert",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-05-13T20:12:08.236Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Shader.cpp",
+              "DocumentMoniker": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\Shader.cpp",
+              "RelativeDocumentMoniker": "Shader.cpp",
+              "ToolTip": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\Shader.cpp",
+              "RelativeToolTip": "Shader.cpp",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAAE8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-13T19:18:48.037Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Shader.h",
+              "DocumentMoniker": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\Shader.h",
+              "RelativeDocumentMoniker": "Shader.h",
+              "ToolTip": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\Shader.h",
+              "RelativeToolTip": "Shader.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-13T19:14:21.653Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\main.cpp",
+              "RelativeDocumentMoniker": "main.cpp",
+              "ToolTip": "C:\\Users\\yousi\\ComputerGraphicsProject\\RollerCoaster\\main.cpp",
+              "RelativeToolTip": "main.cpp",
+              "ViewState": "AgIAADEAAAAAAAAAAAAkwE8AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-13T18:47:10.998Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
