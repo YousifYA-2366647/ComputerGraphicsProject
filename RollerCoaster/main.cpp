@@ -2,12 +2,14 @@
 #include <GLFW/glfw3.h>
 #include <glm-1.0.1/glm/glm.hpp>
 #include <glm-1.0.1/glm/gtc/type_ptr.hpp>
+#include <glm-1.0.1/glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
+#include <vector>
 
 #include "Shader.h"
 
-// window settings
+/// window settings
 unsigned int WIDTH = 1800;
 unsigned int HEIGHT = 1000;
 
@@ -19,7 +21,7 @@ unsigned int moveRight = GLFW_KEY_D;
 unsigned int moveLeft = GLFW_KEY_A;
 unsigned int switchPOV = GLFW_KEY_F;
 
-// model data
+/// model data
 float vertices[] = {
 	// positions			// colors
 	0.5f, -0.5f, 0.0f,		1.0f, 0.0f,	0.0f,
@@ -27,12 +29,28 @@ float vertices[] = {
 	0.0f, 0.5f, 0.0f,		0.0f, 0.0f, 1.0f
 };
 
-// functions
+// bezier curve data
+glm::vec3 upperCurve[] = {
+	glm::vec3(1.0f, -0.01f, 0.0f),
+	glm::vec3(1.0f, 1.0f, 0.0f),
+	glm::vec3(-1.0f, 1.0f, 0.0f),
+	glm::vec3(-1.0f, -0.01f, 0.0f),
+};
+
+glm::vec3 lowerCurve[] = {
+	glm::vec3(-1.0f, 0.01f, 0.0f),
+	glm::vec3(-1.0f, -1.0f, 0.0f),
+	glm::vec3(1.0f, -1.0f, 0.0f),
+	glm::vec3(1.0f, 0.01f, 0.0f),
+};
+
+/// functions
 void initializeGLFW();
 GLFWwindow* createGLFWwindow(int width, int height);
 void runWindow(GLFWwindow* window);
 void resizedWindow(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+glm::vec3 calculateBezierCurve(glm::vec3 controlPoints[], float sample);
 
 int main() {
 	initializeGLFW();
@@ -87,6 +105,7 @@ void runWindow(GLFWwindow* window) {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
+	/// model vertex binding
 	// Bind the array and buffer
 	glBindVertexArray(VAO);
 
@@ -101,6 +120,58 @@ void runWindow(GLFWwindow* window) {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	glBindVertexArray(0);
+
+	/// calculate bezier curve
+	std::vector<glm::vec3> upperCurvePoints = {};
+	int steps = 1000;
+
+	for (int i = 0; i < steps; i++) {
+		float t = static_cast<float>(i) / static_cast<float>(steps);
+		upperCurvePoints.push_back(calculateBezierCurve(upperCurve, t));
+	}
+
+	std::vector<glm::vec3> lowerCurvePoints = {};
+
+	for (int i = 0; i < steps; i++) {
+		float t = static_cast<float>(i) / static_cast<float>(steps);
+		lowerCurvePoints.push_back(calculateBezierCurve(lowerCurve, t));
+	}
+
+	/// upper curve vertex binding
+	unsigned int upperBCVAO, upperBCVBO;
+	glGenVertexArrays(1, &upperBCVAO);
+	glGenBuffers(1, &upperBCVBO);
+
+	glBindVertexArray(upperBCVAO);
+
+	// upper curve
+	glBindBuffer(GL_ARRAY_BUFFER, upperBCVBO);
+	glBufferData(GL_ARRAY_BUFFER, upperCurvePoints.size() * sizeof(glm::vec3), upperCurvePoints.data(), GL_STATIC_DRAW);
+
+	// Assign the position attribute (you can find the values at the top in the variable 'vertices')
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0);
+
+	/// lower curve vertex binding
+	unsigned int lowerBCVAO, lowerBCVBO;
+	glGenVertexArrays(1, &lowerBCVAO);
+	glGenBuffers(1, &lowerBCVBO);
+
+	glBindVertexArray(lowerBCVAO);
+
+	// lower curve
+	glBindBuffer(GL_ARRAY_BUFFER, lowerBCVBO);
+	glBufferData(GL_ARRAY_BUFFER, lowerCurvePoints.size() * sizeof(glm::vec3), lowerCurvePoints.data(), GL_STATIC_DRAW);
+
+	// Assign the position attribute (you can find the values at the top in the variable 'vertices')
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0);
+
 	// Tell the program to use the shader's program
 	shader->use();
 
@@ -112,19 +183,19 @@ void runWindow(GLFWwindow* window) {
 		// Make a cool swirling effect for no reason (flexing)
 		float currentTime = glfwGetTime();
 		glm::vec3 color1 = glm::vec3(
-			sin(currentTime + 0.4f) * 0.5f + 0.5f,
-			sin(currentTime + 2.5f) * 0.5f + 0.5f,
-			sin(currentTime + 1.3f) * 0.5f + 0.5f
+			sin(currentTime + 10.0f) * 0.5f + 1.0f,
+			sin(currentTime + 2.5f) * 0.5f + 1.0f,
+			sin(currentTime + 1.3f) * 0.5f + 1.0f
 		);
 		glm::vec3 color2 = glm::vec3(
-			sin(currentTime + 2.0f) * 0.5f + 0.5f,
-			sin(currentTime + 0.5f) * 0.5f + 0.5f,
-			sin(currentTime + 1.1f) * 0.5f + 0.5f
+			sin(currentTime + 2.0f) * 0.5f + 1.0f,
+			sin(currentTime + 3.5f) * 0.5f + 1.0f,
+			sin(currentTime + 1.1f) * 0.5f + 1.0f
 		);
 		glm::vec3 color3 = glm::vec3(
-			sin(currentTime + 2.0f) * 0.5f + 0.5f,
-			sin(currentTime + 2.5f) * 0.5f + 0.5f,
-			sin(currentTime + 3.0f) * 0.5f + 0.5f
+			sin(currentTime + 2.0f) * 0.5f + 1.0f,
+			sin(currentTime + 2.5f) * 0.5f + 1.0f,
+			sin(currentTime + 3.0f) * 0.5f + 1.0f
 		);
 
 		// Update the calculated color values in the fragment shader
@@ -141,6 +212,14 @@ void runWindow(GLFWwindow* window) {
 		shader->use();
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		shader->use();
+		glBindVertexArray(upperBCVAO);
+		glDrawArrays(GL_LINE_STRIP, 0, upperCurvePoints.size());
+
+		shader->use();
+		glBindVertexArray(lowerBCVAO);
+		glDrawArrays(GL_LINE_STRIP, 0, lowerCurvePoints.size());
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -161,4 +240,18 @@ void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, quitKey) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
+}
+
+glm::vec3 calculateBezierCurve(glm::vec3 controlPoints[], float sample) {
+	float oneMinusSample = 1 - sample;
+	float oneMinusSampleSquared = oneMinusSample * oneMinusSample;
+	float oneMinusSampleCubed = oneMinusSampleSquared * oneMinusSample;
+
+	float sampleSquared = sample * sample;
+	float sampleCubed = sample * sampleSquared;
+
+	return oneMinusSampleCubed * controlPoints[0] +
+		3 * oneMinusSampleSquared * sample * controlPoints[1] +
+		3 * oneMinusSample * sampleSquared * controlPoints[2] +
+		sampleCubed * controlPoints[3];
 }
