@@ -9,6 +9,7 @@
 
 #include "Shader.h"
 #include "BezierCurve.h"
+#include "vertex.h"
 
 /// window settings
 unsigned int WIDTH = 1800;
@@ -22,21 +23,24 @@ unsigned int moveRight = GLFW_KEY_D;
 unsigned int moveLeft = GLFW_KEY_A;
 unsigned int switchPOV = GLFW_KEY_F;
 
-/// model data
+float lastFrameTime = 0.0f;
 
 // bezier curve data
-glm::vec3 upperCurvePoints[] = {
-	glm::vec3(1.0f, -0.01f, 0.0f),
-	glm::vec3(1.0f, 1.0f, 0.0f),
-	glm::vec3(-1.0f, 1.0f, 0.0f),
-	glm::vec3(-1.0f, -0.01f, 0.0f),
+Vertex upperCurvePoints[] = {
+	// Position							// Color
+	{glm::vec3(-1.0f, 0.0f, -0.5f),		glm::vec3(1.0f, 1.0f, 1.0f)},
+	{glm::vec3(2.4f,  2.0f,  0.0f),		glm::vec3(1.0f, 0.0f, 1.0f)},
+	{glm::vec3(1.0f,  2.4f, -1.2f),		glm::vec3(1.0f, 1.0f, 0.0f)},
+	{glm::vec3(-1.6f, 2.0f,  0.8f),		glm::vec3(0.0f, 1.0f, 1.0f)},
+	{glm::vec3(0.0f, 0.0f, 0.5f),		glm::vec3(1.0f, 0.0f, 1.0f)}
 };
 
-glm::vec3 lowerCurvePoints[] = {
-	glm::vec3(-1.0f, 0.01f, 0.0f),
-	glm::vec3(-1.0f, -1.0f, 0.0f),
-	glm::vec3(1.0f, -1.0f, 0.0f),
-	glm::vec3(1.0f, 0.01f, 0.0f),
+Vertex lowerCurvePoints[] = {
+	{glm::vec3(-1.0f, 0.0f, -0.5f),		glm::vec3(1.0f, 1.0f, 1.0f)},
+	{glm::vec3(-4.4f, -2.0f, 0.0f),		glm::vec3(1.0f, 0.0f, 1.0f)},
+	{glm::vec3(-1.0f, -2.4f, 1.2f),		glm::vec3(1.0f, 1.0f, 0.0f)},
+	{glm::vec3(1.6f, -2.0f, 0.2f),		glm::vec3(0.0f, 1.0f, 1.0f)},
+	{glm::vec3(0.0f,  0.0f,  0.5f),		glm::vec3(1.0f, 0.0f, 1.0f)}
 };
 
 /// functions
@@ -95,51 +99,58 @@ void runWindow(GLFWwindow* window) {
 	Shader* shader = new Shader("vertexShader.vert", "fragmentShader.frag");
 
 	/// calculate bezier curve
-	std::vector<glm::vec3> upperCurveData;
-	upperCurveData.assign(upperCurvePoints, upperCurvePoints + (sizeof(upperCurvePoints) / (sizeof(glm::vec3))));
+	std::vector<Vertex> upperCurveData;
+	upperCurveData.assign(upperCurvePoints, upperCurvePoints + (sizeof(upperCurvePoints) / (sizeof(Vertex))));
 
 	BezierCurve* upperCurve = new BezierCurve(upperCurveData);
 
-	std::vector<glm::vec3> lowerCurveData;
-	lowerCurveData.assign(lowerCurvePoints, lowerCurvePoints + (sizeof(lowerCurvePoints) / (sizeof(glm::vec3))));
+	std::vector<Vertex> lowerCurveData;
+	lowerCurveData.assign(lowerCurvePoints, lowerCurvePoints + (sizeof(lowerCurvePoints) / (sizeof(Vertex))));
 
 	BezierCurve* lowerCurve = new BezierCurve(lowerCurveData);
 
 	// Tell the program to use the shader's program
 	shader->use();
 
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	glm::mat4 view = glm::mat4(1.0f);
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
+
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 100.0f);
+
+	shader->setMat4("model", model);
+	shader->setMat4("view", view);
+	shader->setMat4("projection", projection);
+
+	glEnable(GL_DEPTH_TEST);
+
+	float currentTime = glfwGetTime();
+	lastFrameTime = currentTime;
+
 	// Main rendering loop
 	while (!glfwWindowShouldClose(window)) {
+		currentTime = glfwGetTime();
+		float deltaTime = currentTime - lastFrameTime;
+		lastFrameTime = currentTime;
+
 		// Process the use input
 		processInput(window);
 
-		// Make a cool swirling effect for no reason (flexing)
+		// Make a cool rotating effect for no reason (flexing)
 		float currentTime = glfwGetTime();
-		glm::vec3 color1 = glm::vec3(
-			sin(currentTime + 10.0f) * 0.5f + 1.0f,
-			sin(currentTime + 2.5f) * 0.5f + 1.0f,
-			sin(currentTime + 1.3f) * 0.5f + 1.0f
-		);
-		glm::vec3 color2 = glm::vec3(
-			sin(currentTime + 2.0f) * 0.5f + 1.0f,
-			sin(currentTime + 3.5f) * 0.5f + 1.0f,
-			sin(currentTime + 1.1f) * 0.5f + 1.0f
-		);
-		glm::vec3 color3 = glm::vec3(
-			sin(currentTime + 2.0f) * 0.5f + 1.0f,
-			sin(currentTime + 2.5f) * 0.5f + 1.0f,
-			sin(currentTime + 3.0f) * 0.5f + 1.0f
-		);
 
-		// Update the calculated color values in the fragment shader
+		model = glm::rotate(model, glm::radians(30.0f) * deltaTime, glm::vec3(0.0f, 1.0f, 0.0f));
+
+		// Update the calculated transform values in the fragment shader
 		shader->use();
-		shader->setVec3("color1", color1);
-		shader->setVec3("color2", color2);
-		shader->setVec3("color3", color3);
+		shader->setMat4("model", model);
 
 		// Give the window a background color
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		upperCurve->Draw(*shader);
 		lowerCurve->Draw(*shader);

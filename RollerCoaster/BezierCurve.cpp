@@ -1,7 +1,7 @@
 #include "BezierCurve.h"
 
 
-BezierCurve::BezierCurve(std::vector<glm::vec3> controlPoints) {
+BezierCurve::BezierCurve(std::vector<Vertex> controlPoints) {
 	this->controlPoints = controlPoints;
 
 	setupCurve();
@@ -24,7 +24,11 @@ void BezierCurve::setupCurve() {
 	for (int i = 0; i < steps; i++) {
 		float sample = static_cast<float>(i) / (steps - 1);
 
-		vertices.push_back(calculateBezierCurve(sample));
+		glm::vec3 position = calculateBezierPoint(sample);
+
+		glm::vec3 color = calculateBezierColor(sample);
+
+		vertices.push_back({ position, color });
 	}
 
 	glGenVertexArrays(1, &VAO);
@@ -34,25 +38,60 @@ void BezierCurve::setupCurve() {
 
 	// lower curve
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-	// Assign the position attribute (you can find the values at the top in the variable 'vertices')
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	// Assign the position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
 	glEnableVertexAttribArray(0);
+
+	// Assign the color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
+	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);
 }
 
-glm::vec3 BezierCurve::calculateBezierCurve(float sample) {
-	float oneMinusSample = 1 - sample;
-	float oneMinusSampleSquared = oneMinusSample * oneMinusSample;
-	float oneMinusSampleCubed = oneMinusSampleSquared * oneMinusSample;
+glm::vec3 BezierCurve::calculateBezierPoint(float sample) {
+	int n = controlPoints.size();
+	glm::vec3 result = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	float sampleSquared = sample * sample;
-	float sampleCubed = sample * sampleSquared;
+	for (int i = 0; i < n; i++) {
+		float coefficient = static_cast<float>(combination(n, i)) * std::pow(1.0f - sample, n - 1 - i) * std::pow(sample, i);
+		result += coefficient * controlPoints[i].Position;
+	}
 
-	return oneMinusSampleCubed * controlPoints[0] +
-		3 * oneMinusSampleSquared * sample * controlPoints[1] +
-		3 * oneMinusSample * sampleSquared * controlPoints[2] +
-		sampleCubed * controlPoints[3];
+	return result;
+}
+
+glm::vec3 BezierCurve::calculateBezierColor(float t) {
+	int n = controlPoints.size() - 1;
+	glm::vec3 result = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	for (int i = 0; i <= n; i++) {
+		float coefficient = static_cast<float>(combination(n, i)) * std::pow(1.0f - t, n - i) * std::pow(t, i);
+		result += coefficient * controlPoints[i].Color;
+	}
+
+	return result;
+}
+
+int BezierCurve::combination(int n, int r) {
+	if (r > n) {
+		return 0;
+	}
+	if (r == 0 || r == n) {
+		return 1;
+	}
+	return factorial(n) / (factorial(r) * factorial(n - r));
+}
+
+int BezierCurve::factorial(int n) {
+	if (n <= 1) {
+		return 1;
+	}
+	int res = 1;
+	for (int i = 2; i <= n; i++) {
+		res = res * i;
+	}
+	return res;
 }

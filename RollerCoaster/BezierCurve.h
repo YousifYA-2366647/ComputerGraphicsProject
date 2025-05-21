@@ -4,21 +4,25 @@
 #include <vector>
 #include <glm-1.0.1/glm/glm.hpp>
 #include "Shader.h"
+#include "vertex.h"
 
 #pragma once
 class BezierCurve
 {
 public:
-	std::vector<glm::vec3> controlPoints;
-	std::vector<glm::vec3> vertices;
+	std::vector<Vertex> controlPoints;
+	std::vector<Vertex> vertices;
 
-	BezierCurve(std::vector<glm::vec3> controlPoints);
+	BezierCurve(std::vector<Vertex> controlPoints);
 	~BezierCurve();
 	void Draw(Shader& shader);
 private:
 	unsigned int VAO, VBO;
 	void setupCurve();
-	glm::vec3 calculateBezierCurve(float sample);
+	glm::vec3 calculateBezierPoint(float sample);
+	glm::vec3 calculateBezierColor(float sample);
+	int combination(int n, int r);
+	int factorial(int n);
 };
 
 #endif
