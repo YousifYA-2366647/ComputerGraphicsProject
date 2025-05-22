@@ -43,13 +43,13 @@ Cart::Cart(const std::string& path) {
         // Set up the default cart vertices and indices (same as in the default constructor)
         m_vertices = {
             // Position                             // Color
-            {glm::vec3(0.3f, 0.2f, 0.2f),          glm::vec3(0.5f, 0.0f, 0.0f)},    // Left Bottom Front
+            {glm::vec3(0.3f, 0.2f, 0.2f),          glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Bottom Front
             {glm::vec3(-0.3f, 0.2f, 0.2f),         glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Bottom Back
-            {glm::vec3(0.3f, -0.2f, 0.2f),         glm::vec3(0.5f, 0.0f, 0.0f)},    // Left Top Front
+            {glm::vec3(0.3f, -0.2f, 0.2f),         glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Top Front
             {glm::vec3(-0.3f, -0.2f, 0.2f),        glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Top Back
-            {glm::vec3(0.3f, 0.2f, -0.2f),         glm::vec3(0.5f, 0.0f, 0.0f)},    // Right Bottom Front
+            {glm::vec3(0.3f, 0.2f, -0.2f),         glm::vec3(0.0f, 0.5f, 0.5f)},    // Right Bottom Front
             {glm::vec3(-0.3f, 0.2f, -0.2f),        glm::vec3(0.0f, 0.5f, 0.5f)},    // Right Bottom Back
-            {glm::vec3(0.3f, -0.2f, -0.2f),        glm::vec3(0.5f, 0.0f, 0.0f)},    // Right Top Front
+            {glm::vec3(0.3f, -0.2f, -0.2f),        glm::vec3(1.0f, 1.0f, 1.0f)},    // Right Top Front
             {glm::vec3(-0.3f, -0.2f, -0.2f),       glm::vec3(0.0f, 0.5f, 0.5f)},    // Right Top Back
         };
 
@@ -78,11 +78,12 @@ Cart::~Cart() {
     glDeleteBuffers(1, &EBO);
 }
 
-void Cart::Draw(Shader& shader) {
-    shader.use();
+void Cart::Draw() {
+    modelShader->use();
     glBindVertexArray(VAO);
 
     if (useCustomModel) {
+
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
     }
     else {
@@ -92,17 +93,17 @@ void Cart::Draw(Shader& shader) {
 }
 
 void Cart::Move(glm::vec3& position, glm::vec3& direction) {
-    this->position = position + glm::vec3(0.0f, 0.2f, 0.0f);
-    this->front = glm::normalize(direction);
+    this->position = position + ((useCustomModel ? glm::vec3(0.0f, 0.1f, 0.0f) : glm::vec3(0.0f, 0.2f, 0.0f)) * size);
+    this->front = glm::normalize(direction) * -1.0f;
 
-    glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 worldUp = glm::vec3(0.0f, -1.0f, 0.0f);
     this->right = glm::normalize(glm::cross(worldUp, this->front));
 
     if (glm::length(this->right) < 0.001f) {
         this->right = glm::vec3(1.0f, 0.0f, 0.0f);
     }
 
-    this->up = glm::normalize(glm::cross(this->front, this->right));
+    this->up = glm::normalize(glm::cross(this->right, this->front));
 
     glm::mat4 view = glm::lookAt(
         this->position,
@@ -111,9 +112,37 @@ void Cart::Move(glm::vec3& position, glm::vec3& direction) {
     );
 
     modelMatrix = glm::inverse(view);
+
+    if (useCustomModel) {
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.2f) * size);
+    }
+
+    modelShader->use();
+    modelShader->setMat4("model", modelMatrix);
 }
 
 void Cart::setupCart() {
+    modelShader = new Shader("cartVertexShader.vert", "cartFragmentShader.frag");
+
+    glm::mat4 cartModel = glm::mat4(1.0f);
+    if (useCustomModel) {
+        cartModel = glm::scale(cartModel, glm::vec3(2.0f));
+    }
+    cartModel = glm::rotate(cartModel, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    setModel(cartModel);
+
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
+
+    glm::mat4 projection;
+    projection = glm::perspective(glm::radians(50.0f), static_cast<float>(1800) / 1000, 0.1f, 100.0f);
+    modelShader->use();
+
+    modelShader->setMat4("model", cartModel);
+    modelShader->setMat4("view", view);
+    modelShader->setMat4("projection", projection);
+
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -155,6 +184,8 @@ bool Cart::loadModel(const std::string& path) {
     // Clear previous vertices and indices
     m_vertices.clear();
     m_indices.clear();
+
+    directory = path.substr(0, path.find_last_of('/'));
 
     // Process scene graph and extract mesh data
     processNode(scene->mRootNode, scene);
@@ -208,4 +239,8 @@ void Cart::processMesh(aiMesh* mesh, const aiScene* scene) {
             m_indices.push_back(vertexStartIndex + face.mIndices[j]);
         }
     }
+}
+
+void Cart::setModel(glm::mat4& model) {
+    this->modelMatrix = model;
 }

@@ -2,6 +2,7 @@
 #define CART_H
 
 #include <glm-1.0.1/glm/glm.hpp>
+#include <glm-1.0.1/glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <string>
 #include <assimp/postprocess.h>
@@ -16,14 +17,18 @@
 class Cart
 {
 public:
+    Shader* modelShader;
+    float size = 2.5f;
     Cart();
     Cart(const std::string& path);
     ~Cart();
-    void Draw(Shader& shader);
+    void Draw();
     void Move(glm::vec3& position, glm::vec3& direction);
     glm::mat4 getModel();
+    void setModel(glm::mat4& model);
 private:
     unsigned int VAO, VBO, EBO;
+    std::string directory;
     std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
     glm::mat4 modelMatrix;
