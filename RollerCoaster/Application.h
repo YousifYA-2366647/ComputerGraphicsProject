@@ -56,8 +56,8 @@ private:
 	unsigned int moveBackward = GLFW_KEY_S;
 	unsigned int moveRight = GLFW_KEY_D;
 	unsigned int moveLeft = GLFW_KEY_A;
-	unsigned int moveUp = GLFW_KEY_SPACE;
-	unsigned int moveDown = GLFW_KEY_LEFT_SHIFT;
+	unsigned int moveUp = GLFW_KEY_E;
+	unsigned int moveDown = GLFW_KEY_Q;
 	unsigned int switchPOV = GLFW_KEY_F;
 	unsigned int togglePanelKey = GLFW_KEY_TAB;
 

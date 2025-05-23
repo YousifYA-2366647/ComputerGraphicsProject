@@ -136,25 +136,6 @@ void Cart::Move(float distanceAlongCurve, BezierCurve& currentCurve) {
     }
 
     // Set the results into the cart
-    this->position = position + (useCustomModel ? glm::vec3(0.0f, 0.12f, 0.0f) * size : glm::vec3(0.0f, 0.2f, 0.0f));
-    this->front = glm::normalize(direction) * -1.0f;
-
-            // Interpolate the position for smooth movement
-            glm::vec3 interpPos = glm::mix(a.arcVertex.Position, b.arcVertex.Position, f);
-
-            glm::vec4 worldPos = currentCurve.getModel() * glm::vec4(interpPos, 1.0f);
-            position = glm::vec3(worldPos);
-
-            // Calculate the direction in which the cart has to look
-            float t = glm::mix(a.t, b.t, f);
-            direction = currentCurve.calculateBezierDerivative(t);
-
-            direction = glm::normalize(glm::mat3(currentCurve.getModel()) * direction);
-            break;
-        }
-    }
-
-    // Set the results into the cart
     this->position = position + ((useCustomModel ? glm::vec3(0.0f, 0.1f, 0.0f) : glm::vec3(0.0f, 0.2f, 0.0f)) * size);
     this->front = glm::normalize(direction) * -1.0f;
 

@@ -36,7 +36,6 @@ private:
     std::string directory;
     std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
-    std::string directory;
     glm::mat4 modelMatrix;
     glm::vec3 position;
     glm::vec3 front = glm::vec3(1.0f, 0.0f, 0.0f), right = glm::vec3(0.0f, 0.0f, 0.1f), up = glm::vec3(0.0f, 1.0f, 0.0f);

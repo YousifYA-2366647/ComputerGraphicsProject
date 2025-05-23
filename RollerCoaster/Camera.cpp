@@ -29,9 +29,9 @@ void Camera::ProcessKeyboard(int direction, float deltaTime) {
         Position -= Right * velocity;
     if (direction == GLFW_KEY_D)
         Position += Right * velocity;
-    if (direction == GLFW_KEY_LEFT_SHIFT)
+    if (direction == GLFW_KEY_Q)
         Position -= Up * velocity;
-    if (direction == GLFW_KEY_SPACE)
+    if (direction == GLFW_KEY_E)
         Position += Up * velocity;
 }
 
