@@ -15,6 +15,7 @@ BezierCurve::~BezierCurve() {
 void BezierCurve::Draw(Shader& shader) {
 	shader.use();
 	glBindVertexArray(VAO);
+	glLineWidth(4.0f);
 	glDrawArrays(GL_LINE_STRIP, 0, lookupTable.size());
 }
 
@@ -66,11 +67,11 @@ void BezierCurve::setupCurve() {
 }
 
 glm::vec3 BezierCurve::calculateBezierPoint(float sample) {
-	int n = controlPoints.size();
+	int n = controlPoints.size() - 1;
 	glm::vec3 result = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	for (int i = 0; i < n; i++) {
-		float coefficient = static_cast<float>(combination(n, i)) * std::pow(1.0f - sample, n - 1 - i) * std::pow(sample, i);
+	for (int i = 0; i <= n; i++) {
+		float coefficient = static_cast<float>(combination(n, i)) * std::pow(1.0f - sample, n - i) * std::pow(sample, i);
 		result += coefficient * controlPoints[i].Position;
 	}
 

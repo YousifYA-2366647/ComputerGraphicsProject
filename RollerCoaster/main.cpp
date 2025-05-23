@@ -41,20 +41,21 @@ bool panelDragActive = false;
 
 // bezier curve data
 std::vector<Vertex> upperCurvePoints = {
-	// Position							         // Color
-	{glm::vec3(0.0f, 0.0f, -0.2f),		       glm::vec3(1.0f, 1.0f, 1.0f)},
-	{glm::vec3(1.5f, 2.2f, -0.8f),		       glm::vec3(1.0f, 0.0f, 1.0f)},
-	{glm::vec3(-1.2f, 3.0f, 1.2f),		       glm::vec3(1.0f, 1.0f, 0.0f)},
-	{glm::vec3(1.0f, 1.8f, 0.2f),		       glm::vec3(0.0f, 1.0f, 1.0f)},
-	{glm::vec3(0.0f, 0.0f, 0.8f),		       glm::vec3(1.0f, 0.0f, 1.0f)}
+	// Position                                   // Color
+	{glm::vec3(0.0f, 0.0f, 0.0f),                 glm::vec3(1.0f, 1.0f, 1.0f)},  // U0 (Start of upper curve)
+	{glm::vec3(2.0f, 1.0f, 0.8f),                 glm::vec3(1.0f, 0.5f, 0.0f)},  // U1 (MODIFIED for C1 continuity)
+	{glm::vec3(2.5f, 2.0f, 0.2f),                 glm::vec3(0.5f, 1.0f, 0.0f)},  // U2
+	{glm::vec3(3.0f, 1.0f, -0.8f),                glm::vec3(0.0f, 0.5f, 1.0f)},  // U3
+	{glm::vec3(1.0f, -0.5f, 0.5f),                glm::vec3(1.0f, 0.0f, 0.5f)}   // U4 (End of upper curve, connects to start of lower)
 };
 
 std::vector<Vertex> lowerCurvePoints = {
-	{glm::vec3(0.0f, 0.0f, -0.2f),		       glm::vec3(1.0f, 1.0f, 1.0f)},
-	{glm::vec3(-1.2f, -1.8f, -1.2f),		   glm::vec3(0.0f, 1.0f, 1.0f)},
-	{glm::vec3(1.5f, -2.8f, 1.3f),		       glm::vec3(1.0f, 1.0f, 0.0f)},
-	{glm::vec3(-1.0f, -1.5f, 1.0f),		       glm::vec3(1.0f, 0.0f, 1.0f)},
-	{glm::vec3(0.0f, 0.0f, 0.8f),		       glm::vec3(1.0f, 0.0f, 1.0f)}
+	// Position                                   // Color
+	{glm::vec3(1.0f, -0.5f, 0.5f),				  glm::vec3(1.0f, 0.0f, 0.5f)},  // LP0 (Start of lower, connected to U4.Position)
+	{glm::vec3(-1.0f, -2.0f, 1.8f),                glm::vec3(1.0f, 0.5f, 0.0f)},  // LP1 (MODIFIED for C1 continuity)
+	{glm::vec3(-0.5f, -2.0f, 0.2f),               glm::vec3(0.5f, 1.0f, 0.0f)},  // LP2
+	{glm::vec3(-2.0f, -1.0f, -0.8f),              glm::vec3(0.0f, 0.5f, 1.0f)},  // LP3
+	{glm::vec3(0.0f, 0.0f, 0.0f),				  glm::vec3(1.0f, 1.0f, 1.0f)}   // LP4 (End of lower, connected to U0.Position)
 };
 
 // Global/free camera startposities
@@ -153,24 +154,20 @@ void runWindow(GLFWwindow* window) {
 
 		}));
 
-
-
 	/// calculate bezier curve
 	BezierCurve* upperCurve = new BezierCurve(upperCurvePoints);
 
 	BezierCurve* lowerCurve = new BezierCurve(lowerCurvePoints);
 
-	Cart* cartObject = new Cart(std::string("C:/Users/yousi/ComputerGraphicsProject/RollerCoaster/model/rollerCoaster.obj"));
+	Cart* cartObject = new Cart(std::string("model/rollerCoasterModel.glb"));
 
 	// Tell the program to use the shader's program
 	curveShader->use();
 
 	glm::mat4 curveModel = glm::mat4(1.0f);
-	curveModel = glm::rotate(curveModel, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	curveModel = glm::rotate(curveModel, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	glm::mat4 cartModel = glm::mat4(1.0f);
-	cartModel = glm::rotate(cartModel, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	curveModel = glm::rotate(curveModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	curveModel = glm::scale(curveModel, glm::vec3(6.0f));
+	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, -2.0f, 0.0f));
 
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
@@ -181,12 +178,6 @@ void runWindow(GLFWwindow* window) {
 	curveShader->setMat4("model", curveModel);
 	curveShader->setMat4("view", view);
 	curveShader->setMat4("projection", projection);
-
-	modelShader->use();
-
-	modelShader->setMat4("model", cartModel);
-	modelShader->setMat4("view", view);
-	modelShader->setMat4("projection", projection);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -204,6 +195,8 @@ void runWindow(GLFWwindow* window) {
 	float distanceAlongCurve = 0.0f;
 	float upperCurveLength = upperCurve->lookupTable.back().arcLength;
 	float lowerCurveLength = lowerCurve->lookupTable.back().arcLength;
+
+	glm::vec3 prevDirection = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	// Main rendering loop
 	while (!glfwWindowShouldClose(window)) {
@@ -238,15 +231,9 @@ void runWindow(GLFWwindow* window) {
 
 		float effectiveDistance = distanceAlongCurve;
 
-		if (!onUpper) {
-			// Traverse lower curve in reverse
-			float lowerLength = lowerCurve->lookupTable.back().arcLength;
-			effectiveDistance = lowerLength - distanceAlongCurve;
-		}
-
 		// Find the position at this effective distance using linear search
 		glm::vec3 position = table.back().arcVertex.Position; // fallback
-		glm::vec3 direction;
+		glm::vec3 direction = prevDirection;
 		for (size_t i = 1; i < table.size(); ++i) {
 			if (table[i].arcLength >= effectiveDistance) {
 				const auto& a = table[i - 1];
@@ -260,9 +247,7 @@ void runWindow(GLFWwindow* window) {
 				}
 
 				// If moving in reverse, flip interpolation direction
-				glm::vec3 interpPos = onUpper ?
-					glm::mix(a.arcVertex.Position, b.arcVertex.Position, f) :
-					glm::mix(b.arcVertex.Position, a.arcVertex.Position, f);
+				glm::vec3 interpPos = glm::mix(a.arcVertex.Position, b.arcVertex.Position, f);
 
 				glm::vec4 worldPos = curveModel * glm::vec4(interpPos, 1.0f);
 				position = glm::vec3(worldPos);
@@ -270,11 +255,16 @@ void runWindow(GLFWwindow* window) {
 				float t = glm::mix(a.t, b.t, f);
 				direction = currentCurve->calculateBezierDerivative(t);
 
+				direction = glm::normalize(glm::mat3(curveModel) * direction);
 				break;
 			}
 		}
+		
+		float rotationSmoothness = 0.1f;
+		glm::vec3 smoothedDirection = glm::normalize(glm::mix(prevDirection, direction, rotationSmoothness));
 
-		direction = glm::normalize(direction);
+		prevDirection = smoothedDirection;
+
 
 		// CAMERA SWITCHING LOGIC
 		glm::mat4 view;
@@ -316,7 +306,6 @@ void runWindow(GLFWwindow* window) {
 
 
 	delete curveShader;
-	delete modelShader;
 	delete upperCurve;
 	delete lowerCurve;
 	delete cartObject;
