@@ -1,14 +1,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "stb_image.h"
+
 #include "Application.h"
 #include <iostream>
 #include <vector>
 
-#include "Shader.h"
-#include "BezierCurve.h"
-#include "vertex.h"
-#include "Cart.h"
 #include "Camera.h"
 #include "UIPanel.h"
 #include "Application.h"

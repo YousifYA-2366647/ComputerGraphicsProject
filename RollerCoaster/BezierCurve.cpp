@@ -3,7 +3,7 @@
 
 BezierCurve::BezierCurve(std::vector<Vertex> controlPoints) {
 	this->controlPoints = controlPoints;
-	this->curveShader = new Shader("vertexShader.vert", "fragmentShader.frag");
+	this->curveShader = new Shader("curveVertexShader.vert", "curveFragmentShader.frag");
 
 	setupCurve();
 }
@@ -44,11 +44,6 @@ void BezierCurve::setupCurve() {
 		prevPoint = position;
 	}
 
-	std::ofstream out("track_curve.csv");
-	for (const auto& p : lookupTable) {
-		out << p.arcVertex.Position.x << "," << p.arcVertex.Position.y << "," << p.arcVertex.Position.z << "\n";
-	}
-
 	std::vector<Vertex> vertexData;
 	vertexData.reserve(lookupTable.size());
 	for (const auto& entry : lookupTable) {
@@ -74,7 +69,7 @@ void BezierCurve::setupCurve() {
 	glBindVertexArray(0);
 
 	curveModel = glm::rotate(curveModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	curveModel = glm::scale(curveModel, glm::vec3(1.0f));
+	curveModel = glm::scale(curveModel, glm::vec3(5.0f));
 	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, -2.0f, 0.0f));
   
 	curveShader->use();

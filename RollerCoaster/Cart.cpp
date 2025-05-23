@@ -281,5 +281,5 @@ glm::vec3 Cart::getPosition() {
 }
 
 glm::vec3 Cart::getDirection() {
-    return front;
+    return front * -1.0f;
 }
