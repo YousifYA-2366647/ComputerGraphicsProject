@@ -142,22 +142,34 @@
     <None Include="cartFragmentShader.frag" />
     <None Include="cartVertexShader.vert" />
     <None Include="fragmentShader.frag" />
+    <None Include="panelFragmentShader.frag" />
+    <None Include="panelVertexShader.vert" />
+    <None Include="UIPanelShader.frag" />
+    <None Include="UIPanelShader.vert" />
     <None Include="vertexShader.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="BezierCurve.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cart.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="UIPanel.cpp" />
     <ClCompile Include="vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="arcLengthEntry.h" />
     <ClInclude Include="BezierCurve.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Cart.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="UIPanel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

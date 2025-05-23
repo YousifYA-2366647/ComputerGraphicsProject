@@ -30,6 +30,18 @@
     <None Include="cartFragmentShader.frag">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="UIPanelShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="UIPanelShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="panelFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="panelVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,6 +62,18 @@
     <ClCompile Include="Cart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UIPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -65,6 +89,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="arcLengthEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UIPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

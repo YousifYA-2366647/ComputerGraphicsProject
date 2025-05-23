@@ -30,6 +30,9 @@ Cart::Cart() {
         1, 4, 5
     };
 
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f, 0.1f, 0.1f) * size);
+
     setupCart();
 }
 
@@ -69,6 +72,10 @@ Cart::Cart(const std::string& path) {
         };
     }
 
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.05f, 0.05f) * size);
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
     setupCart();
 }
 
@@ -76,10 +83,12 @@ Cart::~Cart() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+    delete modelShader;
 }
 
 void Cart::Draw() {
     modelShader->use();
+    modelShader->setMat4("model", modelMatrix);
     glBindVertexArray(VAO);
 
     if (useCustomModel) {
@@ -109,6 +118,26 @@ void Cart::Move(float distanceAlongCurve, BezierCurve& currentCurve) {
             if (range == 0.0f) {
                 f = 0.0f;
             }
+
+            glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+            // Interpolate the position for smooth movement
+            glm::vec3 interpPos = glm::mix(a.arcVertex.Position, b.arcVertex.Position, f);
+
+            glm::vec4 worldPos = currentCurve.getModel() * glm::vec4(interpPos, 1.0f);
+            position = glm::vec3(worldPos);
+
+            // Calculate the direction in which the cart has to look
+            float t = glm::mix(a.t, b.t, f);
+            direction = currentCurve.calculateBezierDerivative(t);
+
+            direction = glm::normalize(glm::mat3(currentCurve.getModel()) * direction);
+            break;
+        }
+    }
+
+    // Set the results into the cart
+    this->position = position + (useCustomModel ? glm::vec3(0.0f, 0.12f, 0.0f) * size : glm::vec3(0.0f, 0.2f, 0.0f));
+    this->front = glm::normalize(direction) * -1.0f;
 
             // Interpolate the position for smooth movement
             glm::vec3 interpPos = glm::mix(a.arcVertex.Position, b.arcVertex.Position, f);
@@ -144,37 +173,12 @@ void Cart::Move(float distanceAlongCurve, BezierCurve& currentCurve) {
         this->up
     );
 
-    modelMatrix = glm::inverse(view);
-
-    if (useCustomModel) {
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.2f) * size);
-    }
-
-    modelShader->use();
-    modelShader->setMat4("model", modelMatrix);
+    glm::mat4 transform = glm::inverse(view);
+    modelMatrix = glm::scale(transform, glm::vec3(0.1f, 0.1f, 0.2f) * size);
 }
 
 void Cart::setupCart() {
     modelShader = new Shader("cartVertexShader.vert", "cartFragmentShader.frag");
-
-    glm::mat4 cartModel = glm::mat4(1.0f);
-    if (useCustomModel) {
-        cartModel = glm::scale(cartModel, glm::vec3(2.0f));
-    }
-    cartModel = glm::rotate(cartModel, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-    setModel(cartModel);
-
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
-
-    glm::mat4 projection;
-    projection = glm::perspective(glm::radians(50.0f), static_cast<float>(1800) / 1000, 0.1f, 100.0f);
-    modelShader->use();
-
-    modelShader->setMat4("model", cartModel);
-    modelShader->setMat4("view", view);
-    modelShader->setMat4("projection", projection);
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -201,6 +205,23 @@ void Cart::setupCart() {
 
 glm::mat4 Cart::getModel() {
     return modelMatrix;
+}
+
+void Cart::setModel(glm::mat4& newModel) {
+    modelShader->use();
+    modelShader->setMat4("model", newModel);
+
+    this->modelMatrix = newModel;
+}
+
+void Cart::setView(glm::mat4& newView) {
+    modelShader->use();
+    modelShader->setMat4("view", newView);
+}
+
+void Cart::setProjection(glm::mat4& newProjection) {
+    modelShader->use();
+    modelShader->setMat4("projection", newProjection);
 }
 
 bool Cart::loadModel(const std::string& path) {
@@ -274,14 +295,10 @@ void Cart::processMesh(aiMesh* mesh, const aiScene* scene) {
     }
 }
 
-void Cart::setModel(glm::mat4& model) {
-    this->modelMatrix = model;
+glm::vec3 Cart::getPosition() {
+    return position;
 }
 
-void Cart::setView(glm::mat4& view) {
-    modelShader->setMat4("view", view);
-}
-
-void Cart::setProjection(glm::mat4& projection) {
-    modelShader->setMat4("projection", projection);
+glm::vec3 Cart::getDirection() {
+    return front;
 }

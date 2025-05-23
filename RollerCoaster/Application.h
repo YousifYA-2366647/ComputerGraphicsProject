@@ -14,30 +14,58 @@
 #include "BezierCurve.h"
 #include "vertex.h"
 #include "Cart.h"
+#include "Camera.h"
+#include "UIPanel.h"
 
 #pragma once
 class Application
 {
 public:
 	Application();
-private:
+	~Application();
+
+	void setInputMode(int mode, int value);
+	void setCursorPosCallback(GLFWcursorposfun callback);
+	void setScrollCallback(GLFWscrollfun callback);
+	void setMouseButtonCallback(GLFWmousebuttonfun callback);
+	void setFramebufferSizeCallback(GLFWframebuffersizefun callback);
+
 	void runWindow();
-	void processInput();
-	GLFWwindow* window;
+	// Global/free camera startposities
+	Camera globalCamera = Camera(glm::vec3(0.0f, 2.0f, 10.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f);
+	Camera firstPersonCamera = Camera(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f);
+
+	// Flag om te switchen tussen views
+	bool firstPersonView = true;
 
 	/// window settings
 	unsigned int WIDTH = 1800;
 	unsigned int HEIGHT = 1000;
-	
+
+	bool showPanel = false;
+	bool panelDragActive = false;
+
+	UIPanel* panel;
+private:
+	void processInput(float deltaTime);
+	GLFWwindow* window;
+  
 	// Key mapping
 	unsigned int quitKey = GLFW_KEY_ESCAPE;
 	unsigned int moveForward = GLFW_KEY_W;
 	unsigned int moveBackward = GLFW_KEY_S;
 	unsigned int moveRight = GLFW_KEY_D;
 	unsigned int moveLeft = GLFW_KEY_A;
+	unsigned int moveUp = GLFW_KEY_SPACE;
+	unsigned int moveDown = GLFW_KEY_LEFT_SHIFT;
 	unsigned int switchPOV = GLFW_KEY_F;
+	unsigned int togglePanelKey = GLFW_KEY_TAB;
 
 	float lastFrameTime = 0.0f;
+	float lastX = WIDTH / 2.0f;
+	float lastY = HEIGHT / 2.0f;
+	bool firstMouse = true;
+	float speed = 2.0f;
 
 	// bezier curve data
 	std::vector<Vertex> upperCurvePoints = {

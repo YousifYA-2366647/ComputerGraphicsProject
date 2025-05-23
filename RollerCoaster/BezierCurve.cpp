@@ -3,6 +3,7 @@
 
 BezierCurve::BezierCurve(std::vector<Vertex> controlPoints) {
 	this->controlPoints = controlPoints;
+	this->curveShader = new Shader("vertexShader.vert", "fragmentShader.frag");
 
 	setupCurve();
 }
@@ -10,11 +11,12 @@ BezierCurve::BezierCurve(std::vector<Vertex> controlPoints) {
 BezierCurve::~BezierCurve() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	delete curveShader;
 }
 
-void BezierCurve::Draw(Shader& shader) {
-	shader.use();
-	shader.setMat4("model", curveModel);
+void BezierCurve::Draw() {
+	curveShader->use();
+	//curveShader->setMat4("model", curveModel);
 	glBindVertexArray(VAO);
 	glLineWidth(4.0f);
 	glDrawArrays(GL_LINE_STRIP, 0, lookupTable.size());
@@ -74,6 +76,9 @@ void BezierCurve::setupCurve() {
 	curveModel = glm::rotate(curveModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	curveModel = glm::scale(curveModel, glm::vec3(1.0f));
 	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, -2.0f, 0.0f));
+  
+	curveShader->use();
+	curveShader->setMat4("model", curveModel);
 }
 
 glm::vec3 BezierCurve::calculateBezierPoint(float sample) {
@@ -144,5 +149,17 @@ glm::mat4 BezierCurve::getModel() {
 }
 
 void BezierCurve::setModel(glm::mat4& newModel) {
+	this->curveShader->use();
+	curveShader->setMat4("model", newModel);
 	this->curveModel = newModel;
+}
+
+void BezierCurve::setView(glm::mat4& newView) {
+	this->curveShader->use();
+	curveShader->setMat4("view", newView);
+}
+
+void BezierCurve::setProjection(glm::mat4& newProjection) {
+	this->curveShader->use();
+	curveShader->setMat4("projection", newProjection);
 }
