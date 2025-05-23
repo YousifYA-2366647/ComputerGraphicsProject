@@ -12,6 +12,7 @@
 
 #include "Shader.h"
 #include "vertex.h"
+#include "BezierCurve.h"
 
 #pragma once
 class Cart
@@ -23,9 +24,11 @@ public:
     Cart(const std::string& path);
     ~Cart();
     void Draw();
-    void Move(glm::vec3& position, glm::vec3& direction);
+    void Move(float distanceAlongCurve, BezierCurve& currentCurve);
     glm::mat4 getModel();
     void setModel(glm::mat4& model);
+    void setView(glm::mat4& view);
+    void setProjection(glm::mat4& projection);
 private:
     unsigned int VAO, VBO, EBO;
     std::string directory;

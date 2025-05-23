@@ -20,6 +20,8 @@ public:
 
 	float getTotalLength() const;
 	glm::vec3 calculateBezierDerivative(float sample);
+	glm::mat4 getModel();
+	void setModel(glm::mat4& newModel);
 private:
 	unsigned int VAO, VBO;
 	void setupCurve();
@@ -27,6 +29,7 @@ private:
 	glm::vec3 calculateBezierColor(float sample);
 	int combination(int n, int r);
 	int factorial(int n);
+	glm::mat4 curveModel = glm::mat4(1.0f);
 };
 
 #endif

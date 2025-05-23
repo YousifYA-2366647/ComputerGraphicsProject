@@ -14,6 +14,7 @@ BezierCurve::~BezierCurve() {
 
 void BezierCurve::Draw(Shader& shader) {
 	shader.use();
+	shader.setMat4("model", curveModel);
 	glBindVertexArray(VAO);
 	glLineWidth(4.0f);
 	glDrawArrays(GL_LINE_STRIP, 0, lookupTable.size());
@@ -41,6 +42,11 @@ void BezierCurve::setupCurve() {
 		prevPoint = position;
 	}
 
+	std::ofstream out("track_curve.csv");
+	for (const auto& p : lookupTable) {
+		out << p.arcVertex.Position.x << "," << p.arcVertex.Position.y << "," << p.arcVertex.Position.z << "\n";
+	}
+
 	std::vector<Vertex> vertexData;
 	vertexData.reserve(lookupTable.size());
 	for (const auto& entry : lookupTable) {
@@ -64,6 +70,10 @@ void BezierCurve::setupCurve() {
 	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);
+
+	curveModel = glm::rotate(curveModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	curveModel = glm::scale(curveModel, glm::vec3(1.0f));
+	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, -2.0f, 0.0f));
 }
 
 glm::vec3 BezierCurve::calculateBezierPoint(float sample) {
@@ -127,4 +137,12 @@ int BezierCurve::factorial(int n) {
 
 float BezierCurve::getTotalLength() const {
 	return lookupTable.back().arcLength;
+}
+
+glm::mat4 BezierCurve::getModel() {
+	return curveModel;
+}
+
+void BezierCurve::setModel(glm::mat4& newModel) {
+	this->curveModel = newModel;
 }
