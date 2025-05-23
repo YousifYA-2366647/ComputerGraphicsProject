@@ -92,7 +92,40 @@ void Cart::Draw() {
     }
 }
 
-void Cart::Move(glm::vec3& position, glm::vec3& direction) {
+void Cart::Move(float distanceAlongCurve, BezierCurve& currentCurve) {
+    float curveLength = currentCurve.lookupTable.back().arcLength;
+    glm::vec3 position = currentCurve.lookupTable.back().arcVertex.Position;
+    glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f);
+
+    // Find the correct position
+    for (size_t i = 1; i < currentCurve.lookupTable.size(); ++i) {
+        if (currentCurve.lookupTable[i].arcLength >= distanceAlongCurve) {
+            const auto& a = currentCurve.lookupTable[i - 1];
+            const auto& b = currentCurve.lookupTable[i];
+
+            float range = b.arcLength - a.arcLength;
+            float f = (distanceAlongCurve - a.arcLength) / range;
+
+            if (range == 0.0f) {
+                f = 0.0f;
+            }
+
+            // Interpolate the position for smooth movement
+            glm::vec3 interpPos = glm::mix(a.arcVertex.Position, b.arcVertex.Position, f);
+
+            glm::vec4 worldPos = currentCurve.getModel() * glm::vec4(interpPos, 1.0f);
+            position = glm::vec3(worldPos);
+
+            // Calculate the direction in which the cart has to look
+            float t = glm::mix(a.t, b.t, f);
+            direction = currentCurve.calculateBezierDerivative(t);
+
+            direction = glm::normalize(glm::mat3(currentCurve.getModel()) * direction);
+            break;
+        }
+    }
+
+    // Set the results into the cart
     this->position = position + ((useCustomModel ? glm::vec3(0.0f, 0.1f, 0.0f) : glm::vec3(0.0f, 0.2f, 0.0f)) * size);
     this->front = glm::normalize(direction) * -1.0f;
 
@@ -243,4 +276,12 @@ void Cart::processMesh(aiMesh* mesh, const aiScene* scene) {
 
 void Cart::setModel(glm::mat4& model) {
     this->modelMatrix = model;
+}
+
+void Cart::setView(glm::mat4& view) {
+    modelShader->setMat4("view", view);
+}
+
+void Cart::setProjection(glm::mat4& projection) {
+    modelShader->setMat4("projection", projection);
 }
