@@ -3,6 +3,7 @@
 
 BezierCurve::BezierCurve(std::vector<Vertex> controlPoints) {
 	this->controlPoints = controlPoints;
+	this->curveShader = new Shader("vertexShader.vert", "fragmentShader.frag");
 
 	setupCurve();
 }
@@ -10,11 +11,14 @@ BezierCurve::BezierCurve(std::vector<Vertex> controlPoints) {
 BezierCurve::~BezierCurve() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	delete curveShader;
 }
 
-void BezierCurve::Draw(Shader& shader) {
-	shader.use();
+void BezierCurve::Draw() {
+	curveShader->use();
+	//curveShader->setMat4("model", curveModel);
 	glBindVertexArray(VAO);
+	glLineWidth(4.0f);
 	glDrawArrays(GL_LINE_STRIP, 0, lookupTable.size());
 }
 
@@ -40,6 +44,11 @@ void BezierCurve::setupCurve() {
 		prevPoint = position;
 	}
 
+	std::ofstream out("track_curve.csv");
+	for (const auto& p : lookupTable) {
+		out << p.arcVertex.Position.x << "," << p.arcVertex.Position.y << "," << p.arcVertex.Position.z << "\n";
+	}
+
 	std::vector<Vertex> vertexData;
 	vertexData.reserve(lookupTable.size());
 	for (const auto& entry : lookupTable) {
@@ -63,14 +72,21 @@ void BezierCurve::setupCurve() {
 	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);
+
+	curveModel = glm::rotate(curveModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	curveModel = glm::scale(curveModel, glm::vec3(1.0f));
+	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, -2.0f, 0.0f));
+
+	curveShader->use();
+	curveShader->setMat4("model", curveModel);
 }
 
 glm::vec3 BezierCurve::calculateBezierPoint(float sample) {
-	int n = controlPoints.size();
+	int n = controlPoints.size() - 1;
 	glm::vec3 result = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	for (int i = 0; i < n; i++) {
-		float coefficient = static_cast<float>(combination(n, i)) * std::pow(1.0f - sample, n - 1 - i) * std::pow(sample, i);
+	for (int i = 0; i <= n; i++) {
+		float coefficient = static_cast<float>(combination(n, i)) * std::pow(1.0f - sample, n - i) * std::pow(sample, i);
 		result += coefficient * controlPoints[i].Position;
 	}
 
@@ -126,4 +142,24 @@ int BezierCurve::factorial(int n) {
 
 float BezierCurve::getTotalLength() const {
 	return lookupTable.back().arcLength;
+}
+
+glm::mat4 BezierCurve::getModel() {
+	return curveModel;
+}
+
+void BezierCurve::setModel(glm::mat4& newModel) {
+	this->curveShader->use();
+	curveShader->setMat4("model", newModel);
+	this->curveModel = newModel;
+}
+
+void BezierCurve::setView(glm::mat4& newView) {
+	this->curveShader->use();
+	curveShader->setMat4("view", newView);
+}
+
+void BezierCurve::setProjection(glm::mat4& newProjection) {
+	this->curveShader->use();
+	curveShader->setMat4("projection", newProjection);
 }
