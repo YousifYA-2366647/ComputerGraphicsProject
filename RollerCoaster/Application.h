@@ -49,7 +49,7 @@ public:
 private:
 	void processInput(float deltaTime);
 	GLFWwindow* window;
-
+  
 	// Key mapping
 	unsigned int quitKey = GLFW_KEY_ESCAPE;
 	unsigned int moveForward = GLFW_KEY_W;

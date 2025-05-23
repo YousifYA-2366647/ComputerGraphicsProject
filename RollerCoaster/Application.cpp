@@ -11,7 +11,6 @@ Application::Application(): panel(nullptr) {
 		std::exit(-1);
 	}
 
-
 	glfwMakeContextCurrent(window);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {

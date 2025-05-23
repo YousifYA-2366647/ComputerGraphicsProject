@@ -1,9 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm-1.0.1/glm/glm.hpp>
-#include <glm-1.0.1/glm/gtc/type_ptr.hpp>
-#include <glm-1.0.1/glm/gtc/matrix_transform.hpp>
 
+#include "Application.h"
 #include <iostream>
 #include <vector>
 
@@ -24,7 +22,6 @@ void handleMouseMovement(GLFWwindow* window, double xpos, double ypos);
 void handleScrollInput(GLFWwindow* window, double xoffset, double yoffset);
 void handleMouseClick(GLFWwindow* window, int button, int action, int mods);
 glm::vec3 getPickingRay(double mouseX, double mouseY, int width, int height, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& camPos);
-
 
 int main() {
 	initializeGLFW();
@@ -166,7 +163,3 @@ glm::vec3 getPickingRay(double mouseX, double mouseY, int width, int height, con
 	glm::vec3 rayDir = glm::normalize(glm::vec3(rayWorld) - camPos);
 	return rayDir;
 }
-
-
-
-

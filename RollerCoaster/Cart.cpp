@@ -46,13 +46,13 @@ Cart::Cart(const std::string& path) {
         // Set up the default cart vertices and indices (same as in the default constructor)
         m_vertices = {
             // Position                             // Color
-            {glm::vec3(0.3f, 0.2f, 0.2f),          glm::vec3(0.5f, 0.0f, 0.0f)},    // Left Bottom Front
+            {glm::vec3(0.3f, 0.2f, 0.2f),          glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Bottom Front
             {glm::vec3(-0.3f, 0.2f, 0.2f),         glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Bottom Back
-            {glm::vec3(0.3f, -0.2f, 0.2f),         glm::vec3(0.5f, 0.0f, 0.0f)},    // Left Top Front
+            {glm::vec3(0.3f, -0.2f, 0.2f),         glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Top Front
             {glm::vec3(-0.3f, -0.2f, 0.2f),        glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Top Back
-            {glm::vec3(0.3f, 0.2f, -0.2f),         glm::vec3(0.5f, 0.0f, 0.0f)},    // Right Bottom Front
+            {glm::vec3(0.3f, 0.2f, -0.2f),         glm::vec3(0.0f, 0.5f, 0.5f)},    // Right Bottom Front
             {glm::vec3(-0.3f, 0.2f, -0.2f),        glm::vec3(0.0f, 0.5f, 0.5f)},    // Right Bottom Back
-            {glm::vec3(0.3f, -0.2f, -0.2f),        glm::vec3(0.5f, 0.0f, 0.0f)},    // Right Top Front
+            {glm::vec3(0.3f, -0.2f, -0.2f),        glm::vec3(1.0f, 1.0f, 1.0f)},    // Right Top Front
             {glm::vec3(-0.3f, -0.2f, -0.2f),       glm::vec3(0.0f, 0.5f, 0.5f)},    // Right Top Back
         };
 
@@ -92,6 +92,7 @@ void Cart::Draw() {
     glBindVertexArray(VAO);
 
     if (useCustomModel) {
+
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
     }
     else {
@@ -138,14 +139,33 @@ void Cart::Move(float distanceAlongCurve, BezierCurve& currentCurve) {
     this->position = position + (useCustomModel ? glm::vec3(0.0f, 0.12f, 0.0f) * size : glm::vec3(0.0f, 0.2f, 0.0f));
     this->front = glm::normalize(direction) * -1.0f;
 
-    glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+            // Interpolate the position for smooth movement
+            glm::vec3 interpPos = glm::mix(a.arcVertex.Position, b.arcVertex.Position, f);
+
+            glm::vec4 worldPos = currentCurve.getModel() * glm::vec4(interpPos, 1.0f);
+            position = glm::vec3(worldPos);
+
+            // Calculate the direction in which the cart has to look
+            float t = glm::mix(a.t, b.t, f);
+            direction = currentCurve.calculateBezierDerivative(t);
+
+            direction = glm::normalize(glm::mat3(currentCurve.getModel()) * direction);
+            break;
+        }
+    }
+
+    // Set the results into the cart
+    this->position = position + ((useCustomModel ? glm::vec3(0.0f, 0.1f, 0.0f) : glm::vec3(0.0f, 0.2f, 0.0f)) * size);
+    this->front = glm::normalize(direction) * -1.0f;
+
+    glm::vec3 worldUp = glm::vec3(0.0f, -1.0f, 0.0f);
     this->right = glm::normalize(glm::cross(worldUp, this->front));
 
     if (glm::length(this->right) < 0.001f) {
         this->right = glm::vec3(1.0f, 0.0f, 0.0f);
     }
 
-    this->up = glm::normalize(glm::cross(this->front, this->right));
+    this->up = glm::normalize(glm::cross(this->right, this->front));
 
     glm::mat4 view = glm::lookAt(
         this->position,
@@ -218,6 +238,8 @@ bool Cart::loadModel(const std::string& path) {
     // Clear previous vertices and indices
     m_vertices.clear();
     m_indices.clear();
+
+    directory = path.substr(0, path.find_last_of('/'));
 
     // Process scene graph and extract mesh data
     processNode(scene->mRootNode, scene);

@@ -33,6 +33,7 @@ public:
     glm::vec3 getDirection();
 private:
     unsigned int VAO, VBO, EBO;
+    std::string directory;
     std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
     std::string directory;

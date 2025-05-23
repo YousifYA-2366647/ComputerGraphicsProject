@@ -33,6 +33,7 @@ private:
 	glm::vec3 calculateBezierColor(float sample);
 	int combination(int n, int r);
 	int factorial(int n);
+	glm::mat4 curveModel = glm::mat4(1.0f);
 };
 
 #endif

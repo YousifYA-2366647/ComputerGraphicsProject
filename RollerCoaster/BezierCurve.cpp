@@ -76,7 +76,7 @@ void BezierCurve::setupCurve() {
 	curveModel = glm::rotate(curveModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	curveModel = glm::scale(curveModel, glm::vec3(1.0f));
 	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, -2.0f, 0.0f));
-
+  
 	curveShader->use();
 	curveShader->setMat4("model", curveModel);
 }
