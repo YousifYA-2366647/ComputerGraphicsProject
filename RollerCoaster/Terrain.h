@@ -25,6 +25,7 @@ public:
 	void setModel(glm::mat4& newModel);
 	void setView(glm::mat4& newView);
 	void setProjection(glm::mat4& newProjection);
+	std::vector<Shader*> getBuildingShaders();
 private:
 	unsigned int VAO, VBO, EBO, textureId;
 	std::vector<Vertex> vertices;

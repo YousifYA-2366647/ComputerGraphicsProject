@@ -19,6 +19,7 @@
 #include "Terrain.h"
 #include "SkyBox.h"
 #include "Light.h"
+#include "Convolution.h"
 
 #pragma once
 class Application
@@ -70,12 +71,18 @@ private:
 	unsigned int moveDown = GLFW_KEY_Q;
 	unsigned int switchPOV = GLFW_KEY_F;
 	unsigned int togglePanelKey = GLFW_KEY_TAB;
+	unsigned int blurKey = GLFW_KEY_B;
+	unsigned int edgeKey = GLFW_KEY_N;
+	unsigned int invertKey = GLFW_KEY_I;
+	unsigned int grayScaleKey = GLFW_KEY_G;
+	unsigned int sharpenKey = GLFW_KEY_U;
 
 	float lastFrameTime = 0.0f;
 	float lastX = WIDTH / 2.0f;
 	float lastY = HEIGHT / 2.0f;
 	bool firstMouse = true;
 	float speed = 8.0f;
+	float blurIntensity = 0.0f, edgeDetectIntensity = 0.0f, invertIntensity = 0.0f, grayIntensity = 0.0f, sharpenIntensity = 0.0f;
 
 	// bezier curve data
 	std::vector<Vertex> upperCurvePoints = {

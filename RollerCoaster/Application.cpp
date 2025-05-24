@@ -23,19 +23,19 @@ Application::Application() : panel(nullptr)
 		std::exit(-2);
 	}
     lightManager.addLight(Light(
-        glm::vec3(8.0f, 4.0f, 2.0f),   // positie 
-        glm::vec3(1.0f, 1.0f, 1.0f),   // witte kleur
+        glm::vec3(-4.0f, -13.0f, -40.0f),   // positie 
+        glm::vec3(0.0f, 1.0f, 0.0f),   // witte kleur
         1.0f,                          // constant attenuatie
         0.09f,                         // lineaire attenuatie
         0.032f                         // kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
     ));
     
     lightManager.addLight(Light(
-        glm::vec3(-4.0f, -2.0f, 0.0f), // positie 
+        glm::vec3(-4.0f, -10.0f, -38.0f), // positie 
         glm::vec3(1.0f, 0.6f, 0.2f),   // oranje kleur
         1.0f,                          // constant attenuatie
-        0.022f,                        // lineaire attenuatie
-        0.0019f                        // kwadratische attenuatie
+        0.09f,                        // lineaire attenuatie
+        0.032f                        // kwadratische attenuatie
     ));
     
     lightManager.addLight(Light(
@@ -70,7 +70,7 @@ void Application::runWindow()
 										   { speed = std::max(0.1f, speed - 0.5f); }));
 
 	panel->elements.push_back(new UIButton(glm::vec2(0.3f, 0.4f), glm::vec2(0.15f, 0.15f), [this]() {
-		speed = std::min(50.0f, speed + 0.5f);
+		speed = std::min(10.0f, speed + 0.5f);
 
 		}));
 
@@ -121,6 +121,9 @@ void Application::runWindow()
 	cartObject->getShader()->use();
 	cartObject->getShader()->setVec3("viewPos", cameraPos);
 
+	// === CREATE BLUR EFFECT ===
+	Convolution* convolutor = new Convolution(WIDTH, HEIGHT); // Your blur renderer class
+
 	// Main rendering loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -132,6 +135,8 @@ void Application::runWindow()
 		processInput(deltaTime);
 
 		// Give the window a background color
+		convolutor->bindBuffer();
+		glEnable(GL_DEPTH_TEST); // Enable depth test again
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -167,7 +172,7 @@ void Application::runWindow()
 			if (!firstPersonLookingAround)
 			{
 				// Gebruik de omgekeerde richting van de cart
-				glm::vec3 cartDir = -glm::normalize(cartObject->getDirection());
+				glm::vec3 cartDir = -glm::normalize(cartObject->getDirection() * -1.0f);
 
 				firstPersonCamera.Roty = glm::degrees(atan2(cartDir.z, cartDir.x));
 				firstPersonCamera.Pitch = glm::degrees(asin(cartDir.y));
@@ -206,6 +211,10 @@ void Application::runWindow()
 		terrainObject->setProjection(projection);
 
 		lightManager.applyLighting(cartObject->getShader(), cameraPos);
+		std::vector<Shader*> shaders = terrainObject->getBuildingShaders();
+		for (Shader* shader : shaders) {
+			lightManager.applyLighting(shader, cameraPos);
+		}
 
 		
 
@@ -221,6 +230,28 @@ void Application::runWindow()
 
 		skybox->Draw(view, projection);
 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glDisable(GL_DEPTH_TEST);
+		if (blurIntensity) {
+			convolutor->Blur(blurIntensity);
+		}
+		else if (edgeDetectIntensity) {
+			convolutor->EdgeDetect(edgeDetectIntensity);
+		}
+		else if (invertIntensity) {
+			convolutor->Inverse(invertIntensity);
+		}
+		else if (grayIntensity) {
+			convolutor->GrayScale(grayIntensity);
+		}
+		else if (sharpenIntensity) {
+			convolutor->Sharpen(sharpenIntensity);
+		}
+		else {
+			convolutor->Blur(0.0f);
+		}
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -231,15 +262,38 @@ void Application::runWindow()
 	delete panelShader;
 	delete terrainObject;
 	delete skybox;
+	delete convolutor;
 }
 
 // Process user input
 void Application::processInput(float deltaTime)
 {
+	static bool effectKeyPressed = false;
+	bool edgeDetectPressed = glfwGetKey(window, edgeKey) == GLFW_PRESS;
+	bool blurPressed = glfwGetKey(window, blurKey) == GLFW_PRESS;
+	bool invertPressed = glfwGetKey(window, invertKey) == GLFW_PRESS;
+	bool grayPressed = glfwGetKey(window, grayScaleKey) == GLFW_PRESS;
+	bool sharpenPressed = glfwGetKey(window, sharpenKey) == GLFW_PRESS;
 	if (glfwGetKey(window, quitKey) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+	if (blurPressed && !effectKeyPressed) {
+		blurIntensity = (blurIntensity == 0.0f) ? 10.0f : 0.0f;
+	}
+	if (edgeDetectPressed && !effectKeyPressed) {
+		edgeDetectIntensity = (edgeDetectIntensity == 0.0f) ? 10.0f : 0.0f;
+	}
+	if (invertPressed && !effectKeyPressed) {
+		invertIntensity = (invertIntensity == 0.0f) ? WIDTH : 0.0f;
+	}
+	if (grayPressed && !effectKeyPressed) {
+		grayIntensity = (grayIntensity == 0.0f) ? WIDTH : 0.0f;
+	}
+	if (sharpenPressed && !effectKeyPressed) {
+		sharpenIntensity = (sharpenIntensity == 0.0f) ? 10.0f : 0.0f;
+	}
+	effectKeyPressed = edgeDetectPressed || blurPressed || invertPressed || grayPressed || sharpenPressed;
 
 	static bool lastPanelState = false;
 	bool panelPressed = glfwGetKey(window, togglePanelKey) == GLFW_PRESS;
