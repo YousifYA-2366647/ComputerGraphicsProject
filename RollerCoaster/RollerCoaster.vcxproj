@@ -141,14 +141,18 @@
   <ItemGroup>
     <None Include="cartFragmentShader.frag" />
     <None Include="cartVertexShader.vert" />
-    <None Include="fragmentShader.frag" />
+    <None Include="curveFragmentShader.frag" />
     <None Include="lightShader.frag" />
     <None Include="lightShader.vert" />
     <None Include="panelFragmentShader.frag" />
     <None Include="panelVertexShader.vert" />
+    <None Include="skyBoxFragmentShader.frag" />
+    <None Include="skyBoxVertexShader.vert" />
+    <None Include="terrainFragmentShader.frag" />
+    <None Include="terrainVertexShader.vert" />
     <None Include="UIPanelShader.frag" />
     <None Include="UIPanelShader.vert" />
-    <None Include="vertexShader.vert" />
+    <None Include="curveVertexShader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -159,7 +163,10 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Tree.cpp" />
     <ClCompile Include="UIPanel.cpp" />
     <ClCompile Include="vertex.h" />
   </ItemGroup>
@@ -171,8 +178,10 @@
     <ClInclude Include="Cart.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Tree.h" />
     <ClInclude Include="UIPanel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

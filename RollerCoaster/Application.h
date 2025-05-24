@@ -16,7 +16,10 @@
 #include "Cart.h"
 #include "Camera.h"
 #include "UIPanel.h"
+#include "Terrain.h"
+#include "SkyBox.h"
 #include "Light.h"
+
 #pragma once
 class Application
 {
@@ -35,7 +38,8 @@ public:
 	Camera globalCamera = Camera(glm::vec3(0.0f, 2.0f, 10.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f);
 	Camera firstPersonCamera = Camera(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f);
 
-	
+	// Flag om te switchen tussen views
+	bool firstPersonView = false;
 
 	/// window settings
 	unsigned int WIDTH = 1800;
@@ -72,7 +76,7 @@ private:
 	float lastX = WIDTH / 2.0f;
 	float lastY = HEIGHT / 2.0f;
 	bool firstMouse = true;
-	float speed = 2.0f;
+	float speed = 10.0f;
 
 	// bezier curve data
 	std::vector<Vertex> upperCurvePoints = {

@@ -69,8 +69,10 @@ void Application::runWindow()
 	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.15f, 0.15f), [this]()
 										   { speed = std::max(0.1f, speed - 0.5f); }));
 
-	panel->elements.push_back(new UIButton(glm::vec2(0.3f, 0.4f), glm::vec2(0.15f, 0.15f), [this]()
-										   { speed = std::min(10.0f, speed + 0.5f); }));
+	panel->elements.push_back(new UIButton(glm::vec2(0.3f, 0.4f), glm::vec2(0.15f, 0.15f), [this]() {
+		speed = std::min(50.0f, speed + 0.5f);
+
+		}));
 
 	/// Create bezier curves
 	BezierCurve *upperCurve = new BezierCurve(upperCurvePoints);
@@ -80,11 +82,15 @@ void Application::runWindow()
 	// Create cart model
 	Cart *cartObject = new Cart(std::string("model/rollerCoasterModel.glb"));
 
+	Terrain* terrainObject = new Terrain();
+
+	SkyBox* skybox = new SkyBox();
+
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
 
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
 
 	upperCurve->setView(view);
 	upperCurve->setProjection(projection);
@@ -93,6 +99,8 @@ void Application::runWindow()
 
 	cartObject->setView(view);
 	cartObject->setProjection(projection);
+	terrainObject->setView(view);
+	terrainObject->setProjection(projection);
 
 	// Enable depth test to be able to render things in front of others
 	glEnable(GL_DEPTH_TEST);
@@ -129,6 +137,8 @@ void Application::runWindow()
 
 		upperCurve->Draw();
 		lowerCurve->Draw();
+
+		terrainObject->Draw();
 
 		// Update the distance along the current curve
 		distanceAlongCurve += speed * deltaTime;
@@ -179,13 +189,11 @@ void Application::runWindow()
 		}
 
 		glm::mat4 projection;
-		if (!firstPersonView)
-		{
-			projection = glm::perspective(glm::radians(globalCamera.Zoom), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 100.0f);
+		if (!firstPersonView) {
+			projection = glm::perspective(glm::radians(globalCamera.Zoom), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
 		}
-		else
-		{
-			projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 100.0f);
+		else {
+			projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
 		}
 
 		upperCurve->setView(view);
@@ -194,6 +202,8 @@ void Application::runWindow()
 		lowerCurve->setProjection(projection);
 		cartObject->setView(view);
 		cartObject->setProjection(projection);
+		terrainObject->setView(view);
+		terrainObject->setProjection(projection);
 
 		lightManager.applyLighting(cartObject->getShader(), cameraPos);
 
@@ -209,6 +219,8 @@ void Application::runWindow()
 			panel->draw(*panelShader, view, projection);
 		}
 
+		skybox->Draw(view, projection);
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -217,6 +229,8 @@ void Application::runWindow()
 	delete lowerCurve;
 	delete cartObject;
 	delete panelShader;
+	delete terrainObject;
+	delete skybox;
 }
 
 // Process user input
@@ -260,6 +274,8 @@ void Application::processInput(float deltaTime)
 			globalCamera.ProcessKeyboard(moveRight, deltaTime);
 		if (glfwGetKey(window, moveUp) == GLFW_PRESS)
 			globalCamera.ProcessKeyboard(moveUp, deltaTime);
+		if (glfwGetKey(window, moveDown) == GLFW_PRESS)
+			globalCamera.ProcessKeyboard(moveDown, deltaTime);
 		if (glfwGetKey(window, moveDown) == GLFW_PRESS)
 			globalCamera.ProcessKeyboard(moveDown, deltaTime);
 	}

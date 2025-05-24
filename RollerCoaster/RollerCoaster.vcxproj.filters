@@ -18,10 +18,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertexShader.vert">
+    <None Include="curveVertexShader.vert">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="fragmentShader.frag">
+    <None Include="curveFragmentShader.frag">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="cartVertexShader.vert">
@@ -40,6 +40,18 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="panelVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="terrainVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="terrainFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="skyBoxVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="skyBoxFragmentShader.frag">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>
@@ -74,6 +86,15 @@
     <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -101,6 +122,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
