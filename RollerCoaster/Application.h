@@ -19,6 +19,7 @@
 #include "Terrain.h"
 #include "SkyBox.h"
 #include "Light.h"
+#include "ChromaKey.h"
 
 #pragma once
 class Application
@@ -40,10 +41,11 @@ public:
 
 	// Flag om te switchen tussen views
 	bool firstPersonView = false;
+	bool showChromaKey = true; 
 
 	/// window settings
-	unsigned int WIDTH = 2700;
-	unsigned int HEIGHT = 1580;
+	unsigned int WIDTH = 1800;
+	unsigned int HEIGHT = 1000;
 
 	bool showPanel = false;
 	bool panelDragActive = false;
@@ -59,6 +61,7 @@ public:
 private:
 	void processInput(float deltaTime);
 	GLFWwindow* window;
+	ChromaKeyPictureFrame* chromaKeyPictureFrame;
   
 	// Key mapping
 	unsigned int quitKey = GLFW_KEY_ESCAPE;
@@ -70,6 +73,7 @@ private:
 	unsigned int moveDown = GLFW_KEY_Q;
 	unsigned int switchPOV = GLFW_KEY_F;
 	unsigned int togglePanelKey = GLFW_KEY_TAB;
+	unsigned int toggleChromaKeyKey = GLFW_KEY_C;
 
 	float lastFrameTime = 0.0f;
 	float lastX = WIDTH / 2.0f;
