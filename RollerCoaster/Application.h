@@ -18,6 +18,7 @@
 #include "UIPanel.h"
 #include "Terrain.h"
 #include "SkyBox.h"
+#include "Light.h"
 
 #pragma once
 class Application
@@ -46,8 +47,16 @@ public:
 
 	bool showPanel = false;
 	bool panelDragActive = false;
+	bool firstPersonView = false;
+    bool wasPriorFirstPerson = false;
+    bool firstPersonLookingAround = false;  
+    glm::vec3 savedFirstPersonFront;  
 
 	UIPanel* panel;
+	LightManager lightManager;
+	
+    
+    
 private:
 	void processInput(float deltaTime);
 	GLFWwindow* window;
@@ -87,6 +96,7 @@ private:
 		{glm::vec3(-8.0f, -4.0f, -3.2f),              glm::vec3(0.0f, 0.5f, 1.0f)},
 		{glm::vec3(0.0f, 0.0f, 0.0f),				  glm::vec3(1.0f, 1.0f, 1.0f)}
 	};
+	
 };
 
 #endif

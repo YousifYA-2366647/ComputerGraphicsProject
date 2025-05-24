@@ -71,9 +71,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\dev\assimp\include;C:\dev\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <ExternalIncludePath>C:\dev\assimp\include;C:\dev\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
-    <LibraryPath>C:\dev\assimp\lib;C:\dev\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <LibraryPath>C:\Users\savra\source\repos\ComputerGraphicsProject\RollerCoaster\linking\lib;C:\dev\assimp\lib;C:\dev\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>C:\Users\savra\source\repos\ComputerGraphicsProject\RollerCoaster\linking\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\dev\assimp\include;C:\dev\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
@@ -118,7 +118,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>C:\dev\assimp\lib\Debug\assimp-vc143-mtd.lib;GLFW\glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,6 +142,8 @@
     <None Include="cartFragmentShader.frag" />
     <None Include="cartVertexShader.vert" />
     <None Include="curveFragmentShader.frag" />
+    <None Include="lightShader.frag" />
+    <None Include="lightShader.vert" />
     <None Include="panelFragmentShader.frag" />
     <None Include="panelVertexShader.vert" />
     <None Include="skyBoxFragmentShader.frag" />
@@ -158,6 +160,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cart.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SkyBox.cpp" />
@@ -173,6 +176,7 @@
     <ClInclude Include="BezierCurve.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cart.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="stb_image.h" />
