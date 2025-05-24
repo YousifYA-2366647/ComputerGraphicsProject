@@ -42,8 +42,8 @@ public:
 	bool firstPersonView = false;
 
 	/// window settings
-	unsigned int WIDTH = 2700;
-	unsigned int HEIGHT = 1580;
+	unsigned int WIDTH = 1800;
+	unsigned int HEIGHT = 1000;
 
 	bool showPanel = false;
 	bool panelDragActive = false;

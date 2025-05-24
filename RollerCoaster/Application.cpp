@@ -61,15 +61,15 @@ void Application::runWindow()
 	// Create a shader for the curves
 	Shader *panelShader = new Shader("panelVertexShader.vert", "panelFragmentShader.frag");
     lightManager.initialize();
-	panel = new UIPanel(glm::vec3(0, 2, 0), glm::vec2(1.5f, 1.0f), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
+	panel = new UIPanel(glm::vec3(0, 2, 0), glm::vec2(3.0f, 2.0f), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 	panel->visible = true;
-	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.2f), [this]()
+	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.25f), [this]()
 										   { firstPersonView = !firstPersonView; }));
 
-	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.15f, 0.15f), [this]()
+	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.30f, 0.15f), [this]()
 										   { speed = std::max(0.1f, speed - 0.5f); }));
 
-	panel->elements.push_back(new UIButton(glm::vec2(0.3f, 0.4f), glm::vec2(0.15f, 0.15f), [this]() {
+	panel->elements.push_back(new UIButton(glm::vec2(0.5f, 0.4f), glm::vec2(0.30f, 0.15f), [this]() {
 		speed = std::min(50.0f, speed + 0.5f);
 
 		}));
@@ -166,8 +166,7 @@ void Application::runWindow()
 
 			if (!firstPersonLookingAround)
 			{
-				// Gebruik de omgekeerde richting van de cart
-				glm::vec3 cartDir = -glm::normalize(cartObject->getDirection());
+				glm::vec3 cartDir = glm::normalize(cartObject->getDirection());
 
 				firstPersonCamera.Roty = glm::degrees(atan2(cartDir.z, cartDir.x));
 				firstPersonCamera.Pitch = glm::degrees(asin(cartDir.y));

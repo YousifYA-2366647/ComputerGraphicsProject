@@ -161,12 +161,20 @@ void handleMouseClick(GLFWwindow* window, int button, int action, int mods) {
 	}
 }
 glm::vec3 getPickingRay(double mouseX, double mouseY, int width, int height, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& camPos) {
-	float x = (2.0f * float(mouseX)) / width - 1.0f;
-	float y = 1.0f - (2.0f * float(mouseY)) / height;
-	glm::vec4 rayClip(x, y, -1.0f, 1.0f);
-	glm::mat4 invViewProj = glm::inverse(proj * view);
-	glm::vec4 rayWorld = invViewProj * rayClip;
-	rayWorld /= rayWorld.w;
-	glm::vec3 rayDir = glm::normalize(glm::vec3(rayWorld) - camPos);
-	return rayDir;
+    const int baseWidth = 1800;   
+    const int baseHeight = 1000;  
+    // scale de coordinaten van de muis naar de resolutie van de viewport
+	// zorgt ervoor dat de raycasting werkt voor de meeste resoluties van het scherm
+    float scaledX = (float)mouseX * baseWidth / width;
+    float scaledY = (float)mouseY * baseHeight / height;
+    
+    float x = (2.0f * scaledX) / baseWidth - 1.0f;
+    float y = 1.0f - (2.0f * scaledY) / baseHeight;
+
+    glm::vec4 rayClip(x, y, -1.0f, 1.0f);
+    glm::mat4 invViewProj = glm::inverse(proj * view);
+    glm::vec4 rayWorld = invViewProj * rayClip;
+    rayWorld /= rayWorld.w;
+    glm::vec3 rayDir = glm::normalize(glm::vec3(rayWorld) - camPos);
+    return rayDir;
 }

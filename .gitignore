@@ -30,7 +30,10 @@
 *.out
 *.app
 
+
+
 RollerCoaster/.vs/
 RollerCoaster/RollerCoaster/
 RollerCoaster/x64/
 RollerCoaster/linking/
+RollerCoaster/.vscode/
