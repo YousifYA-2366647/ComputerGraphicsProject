@@ -2,12 +2,12 @@
 
 SkyBox::SkyBox() {
 	std::vector<std::string> faces = {
-        "model/posx.jpg",
-        "model/negx.jpg",
-        "model/posy.jpg",
-        "model/negy.jpg",
-        "model/posz.jpg",
-        "model/negz.jpg"
+        "model/Yokohama3/posx.jpg",
+        "model/Yokohama3/negx.jpg",
+        "model/Yokohama3/posy.jpg",
+        "model/Yokohama3/negy.jpg",
+        "model/Yokohama3/posz.jpg",
+        "model/Yokohama3/negz.jpg"
 	};
 
     skyBoxVertices = {      

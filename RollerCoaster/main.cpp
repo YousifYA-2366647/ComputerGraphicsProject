@@ -83,7 +83,7 @@ void handleMouseMovement(GLFWwindow* window, double xpos, double ypos) {
 	lastY = ypos;
 
 	if (app->firstPersonView) {
-		app->firstPersonCamera.ProcessMouseMovement(xoffset, yoffset);
+		app->firstPersonCamera.ProcessMouseMovement(yoffset, xoffset);
 	}
 	else {
 		app->globalCamera.ProcessMouseMovement(xoffset, yoffset);

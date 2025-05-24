@@ -13,6 +13,7 @@
 #include "Shader.h"
 #include "vertex.h"
 #include "BezierCurve.h"
+#include "ModelLoader.h"
 
 #pragma once
 class Cart
@@ -33,18 +34,15 @@ public:
     glm::vec3 getDirection();
 private:
     unsigned int VAO, VBO, EBO;
-    std::string directory;
     std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
     glm::mat4 modelMatrix;
     glm::vec3 position;
     glm::vec3 front = glm::vec3(1.0f, 0.0f, 0.0f), right = glm::vec3(0.0f, 0.0f, 0.1f), up = glm::vec3(0.0f, 1.0f, 0.0f);
     bool useCustomModel;
+    ModelLoader* modelLoader;
 
     void setupCart();
-    bool loadModel(const std::string& path);
-    void processNode(aiNode* node, const aiScene* scene);
-    void processMesh(aiMesh* mesh, const aiScene* scene);
 };
 
 #endif
