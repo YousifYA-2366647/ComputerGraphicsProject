@@ -54,40 +54,49 @@ void resizedWindow(GLFWwindow* window, int width, int height) {
 
 void handleMouseMovement(GLFWwindow* window, double xpos, double ypos) {
 	static float lastX = app->WIDTH / 2.0f;
-	static float lastY = app->HEIGHT / 2.0f;
-	static bool firstMouse = true;
+  static float lastY = app->HEIGHT / 2.0f;
+  static bool firstMouse = true;
 
-	static bool wasRightPressed = false;
-	bool rightPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+  static bool wasRightPressed = false;
+  bool rightPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 
-	if (rightPressed && !wasRightPressed) {
-		firstMouse = true; // Reset bij nieuwe klik
-	}
-	wasRightPressed = rightPressed;
+  if (app->firstPersonView && rightPressed && !wasRightPressed) {
+      app->firstPersonLookingAround = true;
+      firstMouse = true;  
+  }
 
-	if (!rightPressed)
-		return;
+  if (app->firstPersonView && !rightPressed && wasRightPressed) {
+      app->firstPersonLookingAround = false;
+  }
 
-	if (firstMouse) {
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-		return; 
-	}
-	
+  if (!app->firstPersonView && rightPressed && !wasRightPressed) {
+      firstMouse = true; 
+  }
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
+  wasRightPressed = rightPressed;
 
-	lastX = xpos;
-	lastY = ypos;
+  if (!rightPressed)
+      return;
 
-	if (app->firstPersonView) {
-		app->firstPersonCamera.ProcessMouseMovement(yoffset, xoffset);
-	}
-	else {
-		app->globalCamera.ProcessMouseMovement(xoffset, yoffset);
-	}
+  if (firstMouse) {
+      lastX = xpos;
+      lastY = ypos;
+      firstMouse = false;
+      return; 
+  }
+
+  float xoffset = xpos - lastX;
+  float yoffset = lastY - ypos;
+
+  lastX = xpos;
+  lastY = ypos;
+
+  if (app->firstPersonView && app->firstPersonLookingAround) {
+      app->firstPersonCamera.ProcessMouseMovement(xoffset, yoffset, true);
+  }
+  else if (!app->firstPersonView) {
+      app->globalCamera.ProcessMouseMovement(xoffset, yoffset);
+  }
 	if (app->panelDragActive && app->panel->dragging) {
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);

@@ -1,10 +1,12 @@
 #include "Application.h"
 
 // Create a window with the given width and height
-Application::Application(): panel(nullptr) {
+Application::Application() : panel(nullptr)
+{
 	window = glfwCreateWindow(WIDTH, HEIGHT, "Roller Coaster", NULL, NULL);
 
-	if (window == NULL) {
+	if (window == NULL)
+	{
 		// Exit if the window couldn't be created
 		std::cout << "Couldn't create a GLFW window... Terminating." << std::endl;
 		glfwTerminate();
@@ -13,32 +15,59 @@ Application::Application(): panel(nullptr) {
 
 	glfwMakeContextCurrent(window);
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
 		// Exit if GLAD couldn't be initialized
 		std::cout << "Couldn't initialize GLAD... Terminating." << std::endl;
 		glfwTerminate();
 		std::exit(-2);
 	}
+    lightManager.addLight(Light(
+        glm::vec3(8.0f, 4.0f, 2.0f),   // positie 
+        glm::vec3(1.0f, 1.0f, 1.0f),   // witte kleur
+        1.0f,                          // constant attenuatie
+        0.09f,                         // lineaire attenuatie
+        0.032f                         // kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
+    ));
+    
+    lightManager.addLight(Light(
+        glm::vec3(-4.0f, -2.0f, 0.0f), // positie 
+        glm::vec3(1.0f, 0.6f, 0.2f),   // oranje kleur
+        1.0f,                          // constant attenuatie
+        0.022f,                        // lineaire attenuatie
+        0.0019f                        // kwadratische attenuatie
+    ));
+    
+    lightManager.addLight(Light(
+        glm::vec3(-1.0f, 3.0f, -10.0f), // positie bij de camera
+        glm::vec3(1.0f, 1.0f, 1.0f),    // witte kleur
+        1.0f,                           // constant attenuatie
+        0.09f,                          // lineaire attenuatie
+        0.032f                          // kwadratische attenuatie
+    ));
+	
+	
 }
 
-Application::~Application() {
+Application::~Application()
+{
 	delete panel;
+	
 }
 
 // Runs a loop that keeps rendering the given window
-void Application::runWindow() {
+void Application::runWindow()
+{
 	// Create a shader for the curves
-	Shader* panelShader = new Shader("panelVertexShader.vert", "panelFragmentShader.frag");
-
+	Shader *panelShader = new Shader("panelVertexShader.vert", "panelFragmentShader.frag");
+    lightManager.initialize();
 	panel = new UIPanel(glm::vec3(0, 2, 0), glm::vec2(1.5f, 1.0f), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 	panel->visible = true;
-	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.2f), [this]() {
-		firstPersonView = !firstPersonView;
-		}));
+	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.2f), [this]()
+										   { firstPersonView = !firstPersonView; }));
 
-	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.15f, 0.15f), [this]() {
-		speed = std::max(0.1f, speed - 0.5f);
-		}));
+	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.15f, 0.15f), [this]()
+										   { speed = std::max(0.1f, speed - 0.5f); }));
 
 	panel->elements.push_back(new UIButton(glm::vec2(0.3f, 0.4f), glm::vec2(0.15f, 0.15f), [this]() {
 		speed = std::min(50.0f, speed + 0.5f);
@@ -46,12 +75,12 @@ void Application::runWindow() {
 		}));
 
 	/// Create bezier curves
-	BezierCurve* upperCurve = new BezierCurve(upperCurvePoints);
+	BezierCurve *upperCurve = new BezierCurve(upperCurvePoints);
 
-	BezierCurve* lowerCurve = new BezierCurve(lowerCurvePoints);
+	BezierCurve *lowerCurve = new BezierCurve(lowerCurvePoints);
 
 	// Create cart model
-	Cart* cartObject = new Cart(std::string("model/rollerCoasterModel.glb"));
+	Cart *cartObject = new Cart(std::string("model/rollerCoasterModel.glb"));
 
 	Terrain* terrainObject = new Terrain();
 
@@ -79,7 +108,7 @@ void Application::runWindow() {
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(-1.0f, -1.0f);
 
-	// Define 
+	// Define
 	float currentTime = glfwGetTime();
 	lastFrameTime = currentTime;
 
@@ -88,9 +117,13 @@ void Application::runWindow() {
 	float distanceAlongCurve = 0.0f;
 	float upperCurveLength = upperCurve->lookupTable.back().arcLength;
 	float lowerCurveLength = lowerCurve->lookupTable.back().arcLength;
+	glm::vec3 cameraPos = firstPersonView ? firstPersonCamera.Position : globalCamera.Position;
+	cartObject->getShader()->use();
+	cartObject->getShader()->setVec3("viewPos", cameraPos);
 
 	// Main rendering loop
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window))
+	{
 		currentTime = glfwGetTime();
 		float deltaTime = currentTime - lastFrameTime;
 		lastFrameTime = currentTime;
@@ -110,26 +143,50 @@ void Application::runWindow() {
 		// Update the distance along the current curve
 		distanceAlongCurve += speed * deltaTime;
 
-		if (onUpper && distanceAlongCurve >= upperCurveLength) {
+		if (onUpper && distanceAlongCurve >= upperCurveLength)
+		{
 			onUpper = false;
 			distanceAlongCurve = 0.0f;
 		}
-		else if (!onUpper && distanceAlongCurve >= lowerCurveLength) {
+		else if (!onUpper && distanceAlongCurve >= lowerCurveLength)
+		{
 			onUpper = true;
 			distanceAlongCurve = 0.0f;
 		}
 
 		// Choose the right lookup table
-		BezierCurve* currentCurve = onUpper ? upperCurve : lowerCurve;
+		BezierCurve *currentCurve = onUpper ? upperCurve : lowerCurve;
 
 		// CAMERA SWITCHING LOGIC
 		glm::mat4 view;
-		if (firstPersonView) {
-			firstPersonCamera.Position = cartObject->getPosition() + glm::vec3(0, 1, 0);
-			firstPersonCamera.Front = glm::normalize(cartObject->getDirection());
+		glm::vec3 cameraPos;
+		if (firstPersonView)
+		{
+			firstPersonCamera.Position = cartObject->getPosition() + glm::vec3(0, 0.45f, 0);
+
+			if (!firstPersonLookingAround)
+			{
+				// Gebruik de omgekeerde richting van de cart
+				glm::vec3 cartDir = -glm::normalize(cartObject->getDirection());
+
+				firstPersonCamera.Roty = glm::degrees(atan2(cartDir.z, cartDir.x));
+				firstPersonCamera.Pitch = glm::degrees(asin(cartDir.y));
+
+				firstPersonCamera.updateCameraVectors();
+
+				savedFirstPersonFront = firstPersonCamera.Front;
+			}
+            cameraPos = firstPersonCamera.Position;
+			wasPriorFirstPerson = true;
 			view = firstPersonCamera.GetViewMatrix();
 		}
-		else { view = globalCamera.GetViewMatrix(); }
+		else
+		{
+			cameraPos = globalCamera.Position;
+			view = globalCamera.GetViewMatrix();
+			wasPriorFirstPerson = false;
+			firstPersonLookingAround = false;
+		}
 
 		glm::mat4 projection;
 		if (!firstPersonView) {
@@ -138,7 +195,6 @@ void Application::runWindow() {
 		else {
 			projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
 		}
-
 
 		upperCurve->setView(view);
 		upperCurve->setProjection(projection);
@@ -149,11 +205,17 @@ void Application::runWindow() {
 		terrainObject->setView(view);
 		terrainObject->setProjection(projection);
 
+		lightManager.applyLighting(cartObject->getShader(), cameraPos);
+
+		
 
 		// Move and draw the cart
 		cartObject->Move(distanceAlongCurve, *currentCurve);
 		cartObject->Draw();
-		if (panel->visible) {
+		lightManager.drawLights(view, projection);
+
+		if (panel->visible)
+		{
 			panel->draw(*panelShader, view, projection);
 		}
 
@@ -172,8 +234,10 @@ void Application::runWindow() {
 }
 
 // Process user input
-void Application::processInput(float deltaTime) {
-	if (glfwGetKey(window, quitKey) == GLFW_PRESS) {
+void Application::processInput(float deltaTime)
+{
+	if (glfwGetKey(window, quitKey) == GLFW_PRESS)
+	{
 		glfwSetWindowShouldClose(window, true);
 	}
 
@@ -182,11 +246,13 @@ void Application::processInput(float deltaTime) {
 	lastPanelState = panelPressed;
 	static bool lastSwitchState = false;
 	bool switchPressed = glfwGetKey(window, switchPOV) == GLFW_PRESS;
-	if (switchPressed && !lastSwitchState) {
+	if (switchPressed && !lastSwitchState)
+	{
 		firstPersonView = !firstPersonView;
 	}
 	lastSwitchState = switchPressed;
-	if (panelDragActive && panel->dragging) {
+	if (panelDragActive && panel->dragging)
+	{
 		float depthSpeed = 5.0f * deltaTime;
 
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
@@ -196,7 +262,8 @@ void Application::processInput(float deltaTime) {
 			panel->dragDepth(depthSpeed);
 	}
 
-	if (!firstPersonView) {
+	if (!firstPersonView)
+	{
 		if (glfwGetKey(window, moveForward) == GLFW_PRESS)
 			globalCamera.ProcessKeyboard(moveForward, deltaTime);
 		if (glfwGetKey(window, moveBackward) == GLFW_PRESS)
@@ -214,22 +281,28 @@ void Application::processInput(float deltaTime) {
 	}
 }
 
-void Application::setCursorPosCallback(GLFWcursorposfun callback) {
+void Application::setCursorPosCallback(GLFWcursorposfun callback)
+{
 	glfwSetCursorPosCallback(window, callback);
 }
 
-void Application::setInputMode(int mode, int value) {
+void Application::setInputMode(int mode, int value)
+{
 	glfwSetInputMode(window, mode, value);
 }
 
-void Application::setFramebufferSizeCallback(GLFWframebuffersizefun callback) {
+void Application::setFramebufferSizeCallback(GLFWframebuffersizefun callback)
+{
 	glfwSetFramebufferSizeCallback(window, callback);
 }
 
-void Application::setMouseButtonCallback(GLFWmousebuttonfun callback) {
+void Application::setMouseButtonCallback(GLFWmousebuttonfun callback)
+{
 	glfwSetMouseButtonCallback(window, callback);
 }
 
-void Application::setScrollCallback(GLFWscrollfun callback) {
+void Application::setScrollCallback(GLFWscrollfun callback)
+{
 	glfwSetScrollCallback(window, callback);
 }
+
