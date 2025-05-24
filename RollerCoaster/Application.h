@@ -47,7 +47,6 @@ public:
 
 	bool showPanel = false;
 	bool panelDragActive = false;
-	bool firstPersonView = false;
     bool wasPriorFirstPerson = false;
     bool firstPersonLookingAround = false;  
     glm::vec3 savedFirstPersonFront;  
