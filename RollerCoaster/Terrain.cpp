@@ -156,3 +156,12 @@ void Terrain::setProjection(glm::mat4& newProjection) {
 		building->setProjection(newProjection);
 	}
 }
+
+std::vector<Shader*> Terrain::getBuildingShaders() {
+	std::vector<Shader*> shaders;
+	for (Building* building : buildings) {
+		shaders.push_back(building->buildingShader);
+	}
+
+	return shaders;
+}
