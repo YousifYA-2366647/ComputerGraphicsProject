@@ -35,8 +35,7 @@ public:
 	Camera globalCamera = Camera(glm::vec3(0.0f, 2.0f, 10.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f);
 	Camera firstPersonCamera = Camera(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f);
 
-	// Flag om te switchen tussen views
-	bool firstPersonView = true;
+	
 
 	/// window settings
 	unsigned int WIDTH = 1800;
@@ -44,6 +43,10 @@ public:
 
 	bool showPanel = false;
 	bool panelDragActive = false;
+	bool firstPersonView = false;
+    bool wasPriorFirstPerson = false;
+    bool firstPersonLookingAround = false;  
+    glm::vec3 savedFirstPersonFront;  
 
 	UIPanel* panel;
 private:

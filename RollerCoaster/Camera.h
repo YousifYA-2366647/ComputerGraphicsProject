@@ -31,8 +31,10 @@ public:
 
     void ProcessMouseScroll(float yoffset);
 
-private:
     void updateCameraVectors();
+
+private:
+    
 };
 
 #endif // CAMERA_H
