@@ -79,6 +79,10 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="sharpen.frag">
+    <None Include="chromaKeyFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="chromaVertexShader.vert">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>
@@ -131,6 +135,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChromaKey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -173,6 +180,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChromaKey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

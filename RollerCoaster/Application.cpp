@@ -1,7 +1,7 @@
 #include "Application.h"
 
 // Create a window with the given width and height
-Application::Application() : panel(nullptr)
+Application::Application() : panel(nullptr), chromaKeyPictureFrame(nullptr)
 {
 	window = glfwCreateWindow(WIDTH, HEIGHT, "Roller Coaster", NULL, NULL);
 
@@ -45,14 +45,12 @@ Application::Application() : panel(nullptr)
         0.09f,                          // lineaire attenuatie
         0.032f                          // kwadratische attenuatie
     ));
-	
-	
 }
 
 Application::~Application()
 {
 	delete panel;
-	
+	delete chromaKeyPictureFrame;
 }
 
 // Runs a loop that keeps rendering the given window
@@ -60,13 +58,14 @@ void Application::runWindow()
 {
 	// Create a shader for the curves
 	Shader *panelShader = new Shader("panelVertexShader.vert", "panelFragmentShader.frag");
-    lightManager.initialize();
-	panel = new UIPanel(glm::vec3(0, 2, 0), glm::vec2(1.5f, 1.0f), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
+	lightManager.initialize();
+	chromaKeyPictureFrame = new ChromaKeyPictureFrame("model/camera_frame.png");
+	panel = new UIPanel(glm::vec3(0, 2, 0), glm::vec2(3.0f, 2.0f), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 	panel->visible = true;
-	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.2f), [this]()
+	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.25f), [this]()
 										   { firstPersonView = !firstPersonView; }));
 
-	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.15f, 0.15f), [this]()
+	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.30f, 0.15f), [this]()
 										   { speed = std::max(0.1f, speed - 0.5f); }));
 
 	panel->elements.push_back(new UIButton(glm::vec2(0.3f, 0.4f), glm::vec2(0.15f, 0.15f), [this]() {
@@ -82,9 +81,9 @@ void Application::runWindow()
 	// Create cart model
 	Cart *cartObject = new Cart(std::string("model/rollerCoasterModel.glb"));
 
-	Terrain* terrainObject = new Terrain();
+	Terrain *terrainObject = new Terrain();
 
-	SkyBox* skybox = new SkyBox();
+	SkyBox *skybox = new SkyBox();
 
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
@@ -181,7 +180,7 @@ void Application::runWindow()
 
 				savedFirstPersonFront = firstPersonCamera.Front;
 			}
-            cameraPos = firstPersonCamera.Position;
+			cameraPos = firstPersonCamera.Position;
 			wasPriorFirstPerson = true;
 			view = firstPersonCamera.GetViewMatrix();
 		}
@@ -194,10 +193,12 @@ void Application::runWindow()
 		}
 
 		glm::mat4 projection;
-		if (!firstPersonView) {
+		if (!firstPersonView)
+		{
 			projection = glm::perspective(glm::radians(globalCamera.Zoom), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
 		}
-		else {
+		else
+		{
 			projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
 		}
 
@@ -216,8 +217,6 @@ void Application::runWindow()
 			lightManager.applyLighting(shader, cameraPos);
 		}
 
-		
-
 		// Move and draw the cart
 		cartObject->Move(distanceAlongCurve, *currentCurve);
 		cartObject->Draw();
@@ -229,6 +228,10 @@ void Application::runWindow()
 		}
 
 		skybox->Draw(view, projection);
+		if (showChromaKey)
+		{
+			chromaKeyPictureFrame->Draw();
+		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -315,6 +318,13 @@ void Application::processInput(float deltaTime)
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 			panel->dragDepth(depthSpeed);
 	}
+	static bool lastChromaKeyState = false;
+	bool chromaKeyPressed = glfwGetKey(window, toggleChromaKeyKey) == GLFW_PRESS;
+	if (chromaKeyPressed && !lastChromaKeyState)
+	{
+		showChromaKey = !showChromaKey;
+	}
+	lastChromaKeyState = chromaKeyPressed;
 
 	if (!firstPersonView)
 	{
@@ -359,4 +369,3 @@ void Application::setScrollCallback(GLFWscrollfun callback)
 {
 	glfwSetScrollCallback(window, callback);
 }
-
