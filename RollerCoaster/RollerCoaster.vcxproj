@@ -157,16 +157,17 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BezierCurve.cpp" />
+    <ClCompile Include="Building.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cart.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="Tree.cpp" />
     <ClCompile Include="UIPanel.cpp" />
     <ClCompile Include="vertex.h" />
   </ItemGroup>
@@ -174,14 +175,15 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="arcLengthEntry.h" />
     <ClInclude Include="BezierCurve.h" />
+    <ClInclude Include="Building.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cart.h" />
+    <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Terrain.h" />
-    <ClInclude Include="Tree.h" />
     <ClInclude Include="UIPanel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

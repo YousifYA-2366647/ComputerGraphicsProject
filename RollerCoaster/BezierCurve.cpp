@@ -18,7 +18,7 @@ void BezierCurve::Draw() {
 	curveShader->use();
 	//curveShader->setMat4("model", curveModel);
 	glBindVertexArray(VAO);
-	glLineWidth(4.0f);
+	glLineWidth(8.0f);
 	glDrawArrays(GL_LINE_STRIP, 0, lookupTable.size());
 }
 
@@ -69,8 +69,8 @@ void BezierCurve::setupCurve() {
 	glBindVertexArray(0);
 
 	curveModel = glm::rotate(curveModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	curveModel = glm::scale(curveModel, glm::vec3(5.0f));
-	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, -2.0f, 0.0f));
+	curveModel = glm::scale(curveModel, glm::vec3(10.0f));
+	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, 0.0f, -2.0f));
   
 	curveShader->use();
 	curveShader->setMat4("model", curveModel);

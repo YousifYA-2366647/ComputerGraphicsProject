@@ -42,8 +42,8 @@ public:
 	bool firstPersonView = false;
 
 	/// window settings
-	unsigned int WIDTH = 1800;
-	unsigned int HEIGHT = 1000;
+	unsigned int WIDTH = 2700;
+	unsigned int HEIGHT = 1580;
 
 	bool showPanel = false;
 	bool panelDragActive = false;
@@ -76,7 +76,7 @@ private:
 	float lastX = WIDTH / 2.0f;
 	float lastY = HEIGHT / 2.0f;
 	bool firstMouse = true;
-	float speed = 10.0f;
+	float speed = 8.0f;
 
 	// bezier curve data
 	std::vector<Vertex> upperCurvePoints = {
