@@ -22,11 +22,37 @@ Application::Application() : panel(nullptr)
 		glfwTerminate();
 		std::exit(-2);
 	}
+    lightManager.addLight(Light(
+        glm::vec3(8.0f, 4.0f, 2.0f),   // positie 
+        glm::vec3(1.0f, 1.0f, 1.0f),   // witte kleur
+        1.0f,                          // constant attenuatie
+        0.09f,                         // lineaire attenuatie
+        0.032f                         // kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
+    ));
+    
+    lightManager.addLight(Light(
+        glm::vec3(-4.0f, -2.0f, 0.0f), // positie 
+        glm::vec3(1.0f, 0.6f, 0.2f),   // oranje kleur
+        1.0f,                          // constant attenuatie
+        0.022f,                        // lineaire attenuatie
+        0.0019f                        // kwadratische attenuatie
+    ));
+    
+    lightManager.addLight(Light(
+        glm::vec3(-1.0f, 3.0f, -10.0f), // positie bij de camera
+        glm::vec3(1.0f, 1.0f, 1.0f),    // witte kleur
+        1.0f,                           // constant attenuatie
+        0.09f,                          // lineaire attenuatie
+        0.032f                          // kwadratische attenuatie
+    ));
+	
+	
 }
 
 Application::~Application()
 {
 	delete panel;
+	
 }
 
 // Runs a loop that keeps rendering the given window
@@ -34,7 +60,7 @@ void Application::runWindow()
 {
 	// Create a shader for the curves
 	Shader *panelShader = new Shader("panelVertexShader.vert", "panelFragmentShader.frag");
-
+    lightManager.initialize();
 	panel = new UIPanel(glm::vec3(0, 2, 0), glm::vec2(1.5f, 1.0f), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 	panel->visible = true;
 	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.2f), [this]()
@@ -44,9 +70,7 @@ void Application::runWindow()
 										   { speed = std::max(0.1f, speed - 0.5f); }));
 
 	panel->elements.push_back(new UIButton(glm::vec2(0.3f, 0.4f), glm::vec2(0.15f, 0.15f), [this]()
-										   {
-											   speed = std::min(10.0f, speed + 0.5f);
-										   }));
+										   { speed = std::min(10.0f, speed + 0.5f); }));
 
 	/// Create bezier curves
 	BezierCurve *upperCurve = new BezierCurve(upperCurvePoints);
@@ -85,6 +109,9 @@ void Application::runWindow()
 	float distanceAlongCurve = 0.0f;
 	float upperCurveLength = upperCurve->lookupTable.back().arcLength;
 	float lowerCurveLength = lowerCurve->lookupTable.back().arcLength;
+	glm::vec3 cameraPos = firstPersonView ? firstPersonCamera.Position : globalCamera.Position;
+	cartObject->getShader()->use();
+	cartObject->getShader()->setVec3("viewPos", cameraPos);
 
 	// Main rendering loop
 	while (!glfwWindowShouldClose(window))
@@ -122,6 +149,7 @@ void Application::runWindow()
 
 		// CAMERA SWITCHING LOGIC
 		glm::mat4 view;
+		glm::vec3 cameraPos;
 		if (firstPersonView)
 		{
 			firstPersonCamera.Position = cartObject->getPosition() + glm::vec3(0, 0.45f, 0);
@@ -138,12 +166,13 @@ void Application::runWindow()
 
 				savedFirstPersonFront = firstPersonCamera.Front;
 			}
-
+            cameraPos = firstPersonCamera.Position;
 			wasPriorFirstPerson = true;
 			view = firstPersonCamera.GetViewMatrix();
 		}
 		else
 		{
+			cameraPos = globalCamera.Position;
 			view = globalCamera.GetViewMatrix();
 			wasPriorFirstPerson = false;
 			firstPersonLookingAround = false;
@@ -166,9 +195,15 @@ void Application::runWindow()
 		cartObject->setView(view);
 		cartObject->setProjection(projection);
 
+		lightManager.applyLighting(cartObject->getShader(), cameraPos);
+
+		
+
 		// Move and draw the cart
 		cartObject->Move(distanceAlongCurve, *currentCurve);
 		cartObject->Draw();
+		lightManager.drawLights(view, projection);
+
 		if (panel->visible)
 		{
 			panel->draw(*panelShader, view, projection);
@@ -254,3 +289,4 @@ void Application::setScrollCallback(GLFWscrollfun callback)
 {
 	glfwSetScrollCallback(window, callback);
 }
+
