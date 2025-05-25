@@ -20,7 +20,7 @@ class Cart
 {
 public:
     Shader* modelShader;
-    float size = 2.5f;
+    float size = 8.0f;
     Cart();
     Cart(const std::string& path);
     ~Cart();
@@ -32,7 +32,6 @@ public:
     void setProjection(glm::mat4& projection);
     glm::vec3 getPosition();
     glm::vec3 getDirection();
-    Shader* getShader() { return modelShader; }
 private:
     unsigned int VAO, VBO, EBO;
     std::vector<Vertex> m_vertices;

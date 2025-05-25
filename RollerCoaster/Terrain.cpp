@@ -102,17 +102,15 @@ void Terrain::setupTerrain() {
 	terrainShader->use();
 	terrainShader->setMat4("model", model);
 
-	std::cout << "Terrain bounds: " << glm::to_string(model * glm::vec4(vertices[0].Position, 0.0f)) << std::endl;
-
 	std::vector<glm::vec3> positions = {
 		glm::vec3(-50.0f, 0.0f, -50.0f),
 		glm::vec3(-30.0f, 0.0f, -10.0f),
 		glm::vec3(0.0f, 0.0f,  25.0f),
-		glm::vec3(40.0f, 0.0f, -25.0f),
-		glm::vec3(60.0f, 0.0f,  60.0f),
+		glm::vec3(40.0f, 0.0f, -35.0f),
+		glm::vec3(60.0f, 0.0f,  60.5f),
 		glm::vec3(-60.0f, 0.0f,  55.0f),
 		glm::vec3(25.0f, 0.0f, -60.0f),
-		glm::vec3(40.0f, 0.0f,  20.0f),
+		glm::vec3(40.0f, 0.0f,  10.0f),
 		glm::vec3(0.0f, 0.0f, -55.0f),
 		glm::vec3(-10.0f, 0.0f, -22.0f)
 	};
@@ -127,8 +125,6 @@ void Terrain::setupTerrain() {
 		newBuilding->translateModel(positions[i]);
 		newBuilding->scaleModel(scale);
 
-		std::cout << "Create building at: (" << positions[i].x << ", " << positions[i].y << ", " << positions[i].z << ")" << std::endl;
-		std::cout << "With size: (" << scale.x << ", " << scale.y << ", " << scale.z << ")" << std::endl;
 		buildings.push_back(newBuilding);
 	}
 }
