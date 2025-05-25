@@ -194,10 +194,10 @@
     <None Include="curveVertexShader.vert">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="bloomExtract.frag">
+    <None Include="bloomCombine.frag">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="bloomCombine.frag">
+    <None Include="bloomExtract.frag">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="bloomBlur.frag">
