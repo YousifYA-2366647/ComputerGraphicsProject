@@ -30,6 +30,7 @@
 *.out
 *.app
 
+*.user
 
 
 RollerCoaster/.vs/
