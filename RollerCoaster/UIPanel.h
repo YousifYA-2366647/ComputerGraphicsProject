@@ -3,6 +3,7 @@
 #include <functional>
 #include <glm-1.0.1/glm/glm.hpp>
 #include "Shader.h"
+#include "Camera.h"
 
 class UIElement {
 public:
@@ -21,6 +22,9 @@ public:
     void draw(Shader& shader, const glm::mat4& panelModel) override;
     bool isInside(const glm::vec2& current) override;
     void onClick() override;
+    
+
+    
 };
 
 class UIPanel {

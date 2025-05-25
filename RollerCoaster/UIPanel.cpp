@@ -178,6 +178,7 @@ int UIPanel::pickElement(const glm::vec3& rayStart, const glm::vec3& rayDir) {
     glm::vec3 current = hit - pos;
     float x = glm::dot(current, right) / size.x + 0.5f;
     float y = glm::dot(current, up) / size.y + 0.5f;
+   
     if (x < 0 || x > 1 || y < 0 || y > 1) return 6;
     glm::vec2 currentPanel(x, y);
     for (size_t i = 0; i < elements.size(); ++i) {

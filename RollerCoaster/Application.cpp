@@ -14,7 +14,9 @@ Application::Application() : panel(nullptr), chromaKeyPictureFrame(nullptr)
 	}
 
 	glfwMakeContextCurrent(window);
-
+	
+        
+    
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		// Exit if GLAD couldn't be initialized
@@ -22,29 +24,37 @@ Application::Application() : panel(nullptr), chromaKeyPictureFrame(nullptr)
 		glfwTerminate();
 		std::exit(-2);
 	}
-    lightManager.addLight(Light(
-        glm::vec3(-4.0f, -13.0f, -40.0f),   // positie 
-        glm::vec3(0.0f, 1.0f, 0.0f),   // witte kleur
-        1.0f,                          // constant attenuatie
-        0.09f,                         // lineaire attenuatie
-        0.032f                         // kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
-    ));
-    
-    lightManager.addLight(Light(
-        glm::vec3(-4.0f, -10.0f, -38.0f), // positie 
-        glm::vec3(1.0f, 0.6f, 0.2f),   // oranje kleur
-        1.0f,                          // constant attenuatie
-        0.09f,                        // lineaire attenuatie
-        0.032f                        // kwadratische attenuatie
-    ));
-    
-    lightManager.addLight(Light(
-        glm::vec3(-1.0f, 3.0f, -10.0f), // positie bij de camera
-        glm::vec3(1.0f, 1.0f, 1.0f),    // witte kleur
-        1.0f,                           // constant attenuatie
-        0.09f,                          // lineaire attenuatie
-        0.032f                          // kwadratische attenuatie
-    ));
+	int actual_width, actual_height;
+    glfwGetFramebufferSize(window, &actual_width, &actual_height);
+	printf("Framebuffer size: %d x %d\n", actual_width, actual_height);
+    glViewport(0, 0, actual_width, actual_height);
+	printf("Viewport set to: %d x %d\n", actual_width, actual_height);
+    current_width = actual_width;
+    current_height = actual_height;
+	
+	lightManager.addLight(Light(
+		glm::vec3(-4.0f, -13.0f, -40.0f), // positie
+		glm::vec3(0.0f, 1.0f, 0.0f),	  // witte kleur
+		1.0f,							  // constant attenuatie
+		0.09f,							  // lineaire attenuatie
+		0.032f							  // kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
+		));
+
+	lightManager.addLight(Light(
+		glm::vec3(-4.0f, -10.0f, -38.0f), // positie
+		glm::vec3(1.0f, 0.6f, 0.2f),	  // oranje kleur
+		1.0f,							  // constant attenuatie
+		0.09f,							  // lineaire attenuatie
+		0.032f							  // kwadratische attenuatie
+		));
+
+	lightManager.addLight(Light(
+		glm::vec3(-1.0f, 3.0f, -10.0f), // positie bij de camera
+		glm::vec3(1.0f, 1.0f, 1.0f),	// witte kleur
+		1.0f,							// constant attenuatie
+		0.09f,							// lineaire attenuatie
+		0.032f							// kwadratische attenuatie
+		));
 }
 
 Application::~Application()
@@ -56,6 +66,8 @@ Application::~Application()
 // Runs a loop that keeps rendering the given window
 void Application::runWindow()
 {
+	int current_width, current_height;
+	glfwGetFramebufferSize(window, &current_width, &current_height);
 	// Create a shader for the curves
 	Shader *panelShader = new Shader("panelVertexShader.vert", "panelFragmentShader.frag");
 	lightManager.initialize();
@@ -68,11 +80,8 @@ void Application::runWindow()
 	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.30f, 0.15f), [this]()
 										   { speed = std::max(0.1f, speed - 0.5f); }));
 
-	panel->elements.push_back(new UIButton(glm::vec2(0.3f, 0.4f), glm::vec2(0.15f, 0.15f), [this]() {
-		speed = std::min(10.0f, speed + 0.5f);
-
-		}));
-
+	panel->elements.push_back(new UIButton(glm::vec2(0.6f, 0.4f), glm::vec2(0.30f, 0.15f), [this]()
+										   { speed = std::min(10.0f, speed + 0.5f); }));
 	/// Create bezier curves
 	BezierCurve *upperCurve = new BezierCurve(upperCurvePoints);
 
@@ -85,29 +94,11 @@ void Application::runWindow()
 
 	SkyBox *skybox = new SkyBox();
 
-	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
-
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
-
-	upperCurve->setView(view);
-	upperCurve->setProjection(projection);
-	lowerCurve->setView(view);
-	lowerCurve->setProjection(projection);
-
-	cartObject->setView(view);
-	cartObject->setProjection(projection);
-	terrainObject->setView(view);
-	terrainObject->setProjection(projection);
-
-	// Enable depth test to be able to render things in front of others
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(-1.0f, -1.0f);
 
-	// Define
 	float currentTime = glfwGetTime();
 	lastFrameTime = currentTime;
 
@@ -119,47 +110,22 @@ void Application::runWindow()
 	glm::vec3 cameraPos = firstPersonView ? firstPersonCamera.Position : globalCamera.Position;
 	cartObject->getShader()->use();
 	cartObject->getShader()->setVec3("viewPos", cameraPos);
+	glm::mat4 currentRenderView;
+	glm::mat4 currentRenderProj;
 
 	// === CREATE BLUR EFFECT ===
-	Convolution* convolutor = new Convolution(WIDTH, HEIGHT); // Your blur renderer class
+	Convolution *convolutor = new Convolution(current_width, current_height); 
 
 	// Main rendering loop
 	while (!glfwWindowShouldClose(window))
 	{
+		glfwGetFramebufferSize(window, &current_width, &current_height);
 		currentTime = glfwGetTime();
 		float deltaTime = currentTime - lastFrameTime;
 		lastFrameTime = currentTime;
 
 		// Process the use input
 		processInput(deltaTime);
-
-		// Give the window a background color
-		convolutor->bindBuffer();
-		glEnable(GL_DEPTH_TEST); // Enable depth test again
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		upperCurve->Draw();
-		lowerCurve->Draw();
-
-		terrainObject->Draw();
-
-		// Update the distance along the current curve
-		distanceAlongCurve += speed * deltaTime;
-
-		if (onUpper && distanceAlongCurve >= upperCurveLength)
-		{
-			onUpper = false;
-			distanceAlongCurve = 0.0f;
-		}
-		else if (!onUpper && distanceAlongCurve >= lowerCurveLength)
-		{
-			onUpper = true;
-			distanceAlongCurve = 0.0f;
-		}
-
-		// Choose the right lookup table
-		BezierCurve *currentCurve = onUpper ? upperCurve : lowerCurve;
 
 		// CAMERA SWITCHING LOGIC
 		glm::mat4 view;
@@ -193,14 +159,52 @@ void Application::runWindow()
 		}
 
 		glm::mat4 projection;
-		if (!firstPersonView)
+        float aspect_ratio = static_cast<float>(current_width) / current_height;
+        
+        if (!firstPersonView) {
+            projection = glm::perspective(glm::radians(globalCamera.Zoom), aspect_ratio, 0.1f, 200.0f);
+        } else {
+            projection = glm::perspective(glm::radians(50.0f), aspect_ratio, 0.1f, 200.0f);
+        }
+		currentRenderView = view;
+		currentRenderProj = projection;
+		lastRenderView = view;
+		lastRenderProj = projection;
+		// Give the window a background color
+		convolutor->bindBuffer();
+		glEnable(GL_DEPTH_TEST); // Enable depth test again
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		upperCurve->setView(view);
+		upperCurve->setProjection(projection);
+		lowerCurve->setView(view);
+		lowerCurve->setProjection(projection);
+
+		cartObject->setView(view);
+		cartObject->setProjection(projection);
+		terrainObject->setView(view);
+		terrainObject->setProjection(projection);
+		upperCurve->Draw();
+		lowerCurve->Draw();
+
+		terrainObject->Draw();
+
+		// Update the distance along the current curve
+		distanceAlongCurve += speed * deltaTime;
+
+		if (onUpper && distanceAlongCurve >= upperCurveLength)
 		{
-			projection = glm::perspective(glm::radians(globalCamera.Zoom), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
+			onUpper = false;
+			distanceAlongCurve = 0.0f;
 		}
-		else
+		else if (!onUpper && distanceAlongCurve >= lowerCurveLength)
 		{
-			projection = glm::perspective(glm::radians(50.0f), static_cast<float>(WIDTH) / HEIGHT, 0.1f, 200.0f);
+			onUpper = true;
+			distanceAlongCurve = 0.0f;
 		}
+
+		// Choose the right lookup table
+		BezierCurve *currentCurve = onUpper ? upperCurve : lowerCurve;
 
 		upperCurve->setView(view);
 		upperCurve->setProjection(projection);
@@ -212,8 +216,9 @@ void Application::runWindow()
 		terrainObject->setProjection(projection);
 
 		lightManager.applyLighting(cartObject->getShader(), cameraPos);
-		std::vector<Shader*> shaders = terrainObject->getBuildingShaders();
-		for (Shader* shader : shaders) {
+		std::vector<Shader *> shaders = terrainObject->getBuildingShaders();
+		for (Shader *shader : shaders)
+		{
 			lightManager.applyLighting(shader, cameraPos);
 		}
 
@@ -236,22 +241,28 @@ void Application::runWindow()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glDisable(GL_DEPTH_TEST);
-		if (blurIntensity) {
+		if (blurIntensity)
+		{
 			convolutor->Blur(blurIntensity);
 		}
-		else if (edgeDetectIntensity) {
+		else if (edgeDetectIntensity)
+		{
 			convolutor->EdgeDetect(edgeDetectIntensity);
 		}
-		else if (invertIntensity) {
+		else if (invertIntensity)
+		{
 			convolutor->Inverse(invertIntensity);
 		}
-		else if (grayIntensity) {
+		else if (grayIntensity)
+		{
 			convolutor->GrayScale(grayIntensity);
 		}
-		else if (sharpenIntensity) {
+		else if (sharpenIntensity)
+		{
 			convolutor->Sharpen(sharpenIntensity);
 		}
-		else {
+		else
+		{
 			convolutor->Blur(0.0f);
 		}
 
@@ -271,6 +282,8 @@ void Application::runWindow()
 // Process user input
 void Application::processInput(float deltaTime)
 {
+	int current_width, current_height;
+    glfwGetFramebufferSize(window, &current_width, &current_height);
 	static bool effectKeyPressed = false;
 	bool edgeDetectPressed = glfwGetKey(window, edgeKey) == GLFW_PRESS;
 	bool blurPressed = glfwGetKey(window, blurKey) == GLFW_PRESS;
@@ -281,19 +294,22 @@ void Application::processInput(float deltaTime)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
-	if (blurPressed && !effectKeyPressed) {
+	if (blurPressed && !effectKeyPressed)
+	{
 		blurIntensity = (blurIntensity == 0.0f) ? 10.0f : 0.0f;
 	}
-	if (edgeDetectPressed && !effectKeyPressed) {
+	if (edgeDetectPressed && !effectKeyPressed)
+	{
 		edgeDetectIntensity = (edgeDetectIntensity == 0.0f) ? 10.0f : 0.0f;
 	}
-	if (invertPressed && !effectKeyPressed) {
-		invertIntensity = (invertIntensity == 0.0f) ? WIDTH : 0.0f;
-	}
-	if (grayPressed && !effectKeyPressed) {
-		grayIntensity = (grayIntensity == 0.0f) ? WIDTH : 0.0f;
-	}
-	if (sharpenPressed && !effectKeyPressed) {
+	 if (invertPressed && !effectKeyPressed) {
+        invertIntensity = (invertIntensity == 0.0f) ? current_width : 0.0f;
+    }
+    if (grayPressed && !effectKeyPressed) {
+        grayIntensity = (grayIntensity == 0.0f) ? current_width : 0.0f;
+    }
+	if (sharpenPressed && !effectKeyPressed)
+	{
 		sharpenIntensity = (sharpenIntensity == 0.0f) ? 10.0f : 0.0f;
 	}
 	effectKeyPressed = edgeDetectPressed || blurPressed || invertPressed || grayPressed || sharpenPressed;
