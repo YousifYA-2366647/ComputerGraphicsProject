@@ -84,13 +84,14 @@ private:
 	unsigned int grayScaleKey = GLFW_KEY_G;
 	unsigned int sharpenKey = GLFW_KEY_U;
 	unsigned int toggleChromaKeyKey = GLFW_KEY_C;
+	unsigned int bloomKey = GLFW_KEY_K;
 
 	float lastFrameTime = 0.0f;
 	float lastX = WIDTH / 2.0f;
 	float lastY = HEIGHT / 2.0f;
 	bool firstMouse = true;
 	float speed = 8.0f;
-	float blurIntensity = 0.0f, edgeDetectIntensity = 0.0f, invertIntensity = 0.0f, grayIntensity = 0.0f, sharpenIntensity = 0.0f;
+	float blurIntensity = 0.0f, edgeDetectIntensity = 0.0f, invertIntensity = 0.0f, grayIntensity = 0.0f, sharpenIntensity = 0.0f, bloomBlurIntensity = 0.0f;
 
 	// bezier curve data
 	std::vector<Vertex> upperCurvePoints = {

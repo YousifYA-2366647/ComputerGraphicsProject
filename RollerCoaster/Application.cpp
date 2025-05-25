@@ -169,7 +169,12 @@ void Application::runWindow()
 		}
 
 		// Give the window a background color
-		convolutor->bindBuffer();
+		if (bloomBlurIntensity) {
+			convolutor->bindHDR();
+		}
+		else {
+			convolutor->bindBuffer();
+		}
 		glEnable(GL_DEPTH_TEST); // Enable depth test again
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -269,6 +274,9 @@ void Application::runWindow()
 		{
 			convolutor->Sharpen(sharpenIntensity);
 		}
+		else if (bloomBlurIntensity) {
+			convolutor->Bloom(0.2f, bloomBlurIntensity, 6);
+		}
 		else
 		{
 			convolutor->Blur(0.0f);
@@ -298,6 +306,7 @@ void Application::processInput(float deltaTime)
 	bool invertPressed = glfwGetKey(window, invertKey) == GLFW_PRESS;
 	bool grayPressed = glfwGetKey(window, grayScaleKey) == GLFW_PRESS;
 	bool sharpenPressed = glfwGetKey(window, sharpenKey) == GLFW_PRESS;
+	bool bloomPressed = glfwGetKey(window, bloomKey) == GLFW_PRESS;
 	if (glfwGetKey(window, quitKey) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
@@ -320,7 +329,11 @@ void Application::processInput(float deltaTime)
 	{
 		sharpenIntensity = (sharpenIntensity == 0.0f) ? 10.0f : 0.0f;
 	}
-	effectKeyPressed = edgeDetectPressed || blurPressed || invertPressed || grayPressed || sharpenPressed;
+	if (bloomPressed && !effectKeyPressed)
+	{
+		bloomBlurIntensity = (bloomBlurIntensity == 0.0f) ? 2.0f : 0.0f;
+	}
+	effectKeyPressed = edgeDetectPressed || blurPressed || invertPressed || grayPressed || sharpenPressed || bloomPressed;
 
 	static bool lastPanelState = false;
 	bool panelPressed = glfwGetKey(window, togglePanelKey) == GLFW_PRESS;
