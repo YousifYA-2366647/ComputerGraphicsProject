@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "vertex.h"
 #include "arcLengthEntry.h"
+#include "TrackPiece.h"
 
 #pragma once
 class BezierCurve
@@ -25,14 +26,18 @@ public:
 	void setModel(glm::mat4& newModel);
 	void setView(glm::mat4& newView);
 	void setProjection(glm::mat4& newProjection);
+	TrackPiece* getTrack();
 private:
 	unsigned int VAO, VBO;
 	glm::mat4 curveModel = glm::mat4(1.0f);
+	TrackPiece* trackPiece;
+	bool useCustomModel;
 	void setupCurve();
 	glm::vec3 calculateBezierPoint(float sample);
 	glm::vec3 calculateBezierColor(float sample);
 	int combination(int n, int r);
 	int factorial(int n);
+	void DrawTrackPieces(float spacing);
 };
 
 #endif

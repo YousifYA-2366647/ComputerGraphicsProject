@@ -179,6 +179,7 @@
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TrackPiece.cpp" />
     <ClCompile Include="UIPanel.cpp" />
     <ClCompile Include="vertex.h" />
   </ItemGroup>
@@ -197,6 +198,7 @@
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TrackPiece.h" />
     <ClInclude Include="UIPanel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

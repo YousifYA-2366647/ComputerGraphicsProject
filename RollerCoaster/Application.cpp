@@ -31,30 +31,30 @@ Application::Application() : panel(nullptr), chromaKeyPictureFrame(nullptr)
 	printf("Viewport set to: %d x %d\n", actual_width, actual_height);
     current_width = actual_width;
     current_height = actual_height;
-	
-	lightManager.addLight(Light(
-		glm::vec3(-4.0f, -13.0f, -40.0f), // positie
-		glm::vec3(0.0f, 1.0f, 0.0f),	  // witte kleur
-		1.0f,							  // constant attenuatie
-		0.09f,							  // lineaire attenuatie
-		0.032f							  // kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
-		));
-
-	lightManager.addLight(Light(
-		glm::vec3(-4.0f, -10.0f, -38.0f), // positie
-		glm::vec3(1.0f, 0.6f, 0.2f),	  // oranje kleur
-		1.0f,							  // constant attenuatie
-		0.09f,							  // lineaire attenuatie
-		0.032f							  // kwadratische attenuatie
-		));
-
-	lightManager.addLight(Light(
-		glm::vec3(-1.0f, 3.0f, -10.0f), // positie bij de camera
-		glm::vec3(1.0f, 1.0f, 1.0f),	// witte kleur
-		1.0f,							// constant attenuatie
-		0.09f,							// lineaire attenuatie
-		0.032f							// kwadratische attenuatie
-		));
+  
+    lightManager.addLight(Light(
+        glm::vec3(-4.0f, -16.0f, -40.0f),   // positie 
+        glm::vec3(0.0f, 1.0f, 0.0f),   // groene kleur
+        1.0f,                          // constant attenuatie
+        0.09f,                         // lineaire attenuatie
+        0.032f                         // kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
+    ));
+    
+    lightManager.addLight(Light(
+        glm::vec3(-4.0f, -16.0f, -35.0f), // positie 
+        glm::vec3(1.0f, 0.6f, 0.2f),   // oranje kleur
+        1.0f,                          // constant attenuatie
+        0.09f,                        // lineaire attenuatie
+        0.032f                        // kwadratische attenuatie
+    ));
+    
+    lightManager.addLight(Light(
+        glm::vec3(-1.0f, 3.0f, -10.0f), // positie bij de camera
+        glm::vec3(1.0f, 1.0f, 1.0f),    // witte kleur
+        1.0f,                           // constant attenuatie
+        0.09f,                          // lineaire attenuatie
+        0.032f                          // kwadratische attenuatie
+    ));
 }
 
 Application::~Application()
@@ -108,10 +108,10 @@ void Application::runWindow()
 	float upperCurveLength = upperCurve->lookupTable.back().arcLength;
 	float lowerCurveLength = lowerCurve->lookupTable.back().arcLength;
 	glm::vec3 cameraPos = firstPersonView ? firstPersonCamera.Position : globalCamera.Position;
-	cartObject->getShader()->use();
-	cartObject->getShader()->setVec3("viewPos", cameraPos);
 	glm::mat4 currentRenderView;
 	glm::mat4 currentRenderProj;
+	cartObject->modelShader->use();
+	cartObject->modelShader->setVec3("viewPos", cameraPos);
 
 	// === CREATE BLUR EFFECT ===
 	Convolution *convolutor = new Convolution(current_width, current_height); 
@@ -132,7 +132,7 @@ void Application::runWindow()
 		glm::vec3 cameraPos;
 		if (firstPersonView)
 		{
-			firstPersonCamera.Position = cartObject->getPosition() + glm::vec3(0, 0.45f, 0);
+			firstPersonCamera.Position = cartObject->getPosition() + glm::vec3(0, 0.2f, 0) * cartObject->size;
 
 			if (!firstPersonLookingAround)
 			{
@@ -214,13 +214,13 @@ void Application::runWindow()
 		cartObject->setProjection(projection);
 		terrainObject->setView(view);
 		terrainObject->setProjection(projection);
-
-		lightManager.applyLighting(cartObject->getShader(), cameraPos);
-		std::vector<Shader *> shaders = terrainObject->getBuildingShaders();
-		for (Shader *shader : shaders)
-		{
+		lightManager.applyLighting(cartObject->modelShader, cameraPos);
+		std::vector<Shader*> shaders = terrainObject->getBuildingShaders();
+		for (Shader* shader : shaders) {
 			lightManager.applyLighting(shader, cameraPos);
 		}
+		lightManager.applyLighting(upperCurve->getTrack()->trackShader, cameraPos);
+		lightManager.applyLighting(lowerCurve->getTrack()->trackShader, cameraPos);
 
 		// Move and draw the cart
 		cartObject->Move(distanceAlongCurve, *currentCurve);
