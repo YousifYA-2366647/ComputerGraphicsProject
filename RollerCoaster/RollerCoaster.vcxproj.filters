@@ -54,12 +54,31 @@
     <None Include="skyBoxFragmentShader.frag">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="blur.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="edge.frag">
+      <Filter>Shader Files</Filter>
+    </None>
     <None Include="lightShader.frag">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="lightShader.vert">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="screenFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="screenVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="grayScale.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="invert.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="sharpen.frag">
     <None Include="chromaKeyFragmentShader.frag">
       <Filter>Shader Files</Filter>
     </None>
@@ -110,6 +129,9 @@
     <ClCompile Include="Building.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Convolution.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -152,6 +174,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Building.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Convolution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
