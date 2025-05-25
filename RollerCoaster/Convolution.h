@@ -17,6 +17,8 @@ public:
 	void GrayScale(float intensity);
 	void Sharpen(float intensity);
 	void bindBuffer();
+	int getWidth() const { return screenWidth; }
+    int getHeight() const { return screenHeight; }
 private:
 	Shader* blurShader;
 	Shader* edgeShader;
@@ -28,6 +30,7 @@ private:
 	unsigned int screenWidth, screenHeight;
 	void setupConvolution();
 	void draw(Shader* shader, float intensity);
+	
 };
 
 #endif

@@ -4,7 +4,6 @@
 
 ChromaKeyPictureFrame::ChromaKeyPictureFrame(const std::string& imagePath) {
     shader = new Shader("chromaVertexShader.vert", "chromaKeyFragmentShader.frag");
-    
     setupQuad();
     
     loadTexture(imagePath);
@@ -87,4 +86,26 @@ void ChromaKeyPictureFrame::Draw() {
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glEnable(GL_DEPTH_TEST);
+}
+void ChromaKeyPictureFrame::updateQuadSurface(int width, int height) {
+    float aspect = static_cast<float>(width) / static_cast<float>(height);
+    float quadVertices[20];
+    if (aspect >= 1.0f) {
+        quadVertices[0] = -1.0f;            quadVertices[1] = 1.0f;             
+        quadVertices[5] = 1.0f;             quadVertices[6] = 1.0f;             
+        quadVertices[10] = -1.0f;           quadVertices[11] = -1.0f;           
+        quadVertices[15] = 1.0f;            quadVertices[16] = -1.0f;           
+    } else {
+        float yRe = 1.0f / aspect;
+        quadVertices[0] = -1.0f;            quadVertices[1] = yRe;          
+        quadVertices[5] = 1.0f;             quadVertices[6] = yRe;          
+        quadVertices[10] = -1.0f;           quadVertices[11] = -yRe;        
+        quadVertices[15] = 1.0f;            quadVertices[16] = -yRe;        
+    }
+    quadVertices[2] = 0.0f;  quadVertices[3] = 0.0f;  quadVertices[4] = 1.0f;   
+    quadVertices[7] = 0.0f;  quadVertices[8] = 1.0f;  quadVertices[9] = 1.0f;   
+    quadVertices[12] = 0.0f; quadVertices[13] = 0.0f; quadVertices[14] = 0.0f;  
+    quadVertices[17] = 0.0f; quadVertices[18] = 1.0f; quadVertices[19] = 0.0f;  
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
 }

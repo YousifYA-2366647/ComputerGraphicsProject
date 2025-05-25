@@ -9,6 +9,7 @@ class ChromaKeyPictureFrame {
 public:
     ChromaKeyPictureFrame(const std::string& imagePath);
     ~ChromaKeyPictureFrame();
+    void updateQuadSurface(int width, int height );
     void Draw();
 
 private:

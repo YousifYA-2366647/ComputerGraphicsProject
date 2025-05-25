@@ -72,6 +72,7 @@ void Application::runWindow()
 	Shader *panelShader = new Shader("panelVertexShader.vert", "panelFragmentShader.frag");
 	lightManager.initialize();
 	chromaKeyPictureFrame = new ChromaKeyPictureFrame("model/camera_frame.png");
+	chromaKeyPictureFrame->updateQuadSurface(WIDTH, HEIGHT);
 	panel = new UIPanel(glm::vec3(0, 2, 0), glm::vec2(3.0f, 2.0f), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 	panel->visible = true;
 	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.25f), [this]()
@@ -123,7 +124,10 @@ void Application::runWindow()
 		currentTime = glfwGetTime();
 		float deltaTime = currentTime - lastFrameTime;
 		lastFrameTime = currentTime;
-
+        if (convolutor->getWidth() != current_width || convolutor->getHeight() != current_height) {
+            delete convolutor;
+            convolutor = new Convolution(current_width, current_height);
+        }
 		// Process the use input
 		processInput(deltaTime);
 

@@ -55,6 +55,9 @@ void resizedWindow(GLFWwindow* window, int width, int height) {
     app->HEIGHT = height;
     app->current_width = width;   
     app->current_height = height; 
+    if (app->chromaKeyPictureFrame) {
+        app->chromaKeyPictureFrame->updateQuadSurface(width, height);
+    }
 
 }
 void handleMouseMovement(GLFWwindow* window, double xpos, double ypos) {

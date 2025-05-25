@@ -60,6 +60,7 @@ public:
 
 	UIPanel* panel;
 	LightManager lightManager;
+	ChromaKeyPictureFrame* chromaKeyPictureFrame;
 	
 	
     
@@ -67,7 +68,7 @@ public:
 private:
 	void processInput(float deltaTime);
 	GLFWwindow* window;
-	ChromaKeyPictureFrame* chromaKeyPictureFrame;
+	
   
 	// Key mapping
 	unsigned int quitKey = GLFW_KEY_ESCAPE;
