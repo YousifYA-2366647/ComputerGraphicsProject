@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExternalIncludePath>C:\dev\assimp\include;C:\dev\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
-    <LibraryPath>C:\Users\savra\source\repos\ComputerGraphicsProject\RollerCoaster\linking\lib;C:\dev\lib;C:\dev\assimp\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <IncludePath>C:\Users\savra\source\repos\ComputerGraphicsProject\RollerCoaster\linking\include;C:\dev\include;C:\dev\assimp\include</IncludePath>
+    <LibraryPath>C:\dev\lib;C:\dev\assimp\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>C:\dev\include;C:\dev\assimp\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\dev\include;C:\dev\assimp\include</IncludePath>
@@ -118,7 +118,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;assimp-vc143-mtd.lib;glfw3.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;C:\dev\assimp\lib\Debug\assimp-vc143-mtd.lib;GLFW\glfw3.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="bloomBlur.frag" />
+    <None Include="bloomCombine.frag" />
+    <None Include="bloomExtract.frag" />
     <None Include="blur.frag" />
     <None Include="cartFragmentShader.frag" />
     <None Include="cartVertexShader.vert" />

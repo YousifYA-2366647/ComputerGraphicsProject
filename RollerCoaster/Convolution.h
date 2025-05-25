@@ -17,6 +17,7 @@ public:
 	void GrayScale(float intensity);
 	void Sharpen(float intensity);
 	void bindBuffer();
+	void resize(unsigned int newWidth, unsigned int newHeight);
 private:
 	Shader* blurShader;
 	Shader* edgeShader;
