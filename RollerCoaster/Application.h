@@ -34,7 +34,6 @@ public:
 	void setScrollCallback(GLFWscrollfun callback);
 	void setMouseButtonCallback(GLFWmousebuttonfun callback);
 	void setFramebufferSizeCallback(GLFWframebuffersizefun callback);
-	
 
 	void runWindow();
 	// Global/free camera startposities
@@ -46,21 +45,21 @@ public:
 	bool showChromaKey = true; 
 
 	/// window settings
-	unsigned int WIDTH = 1920;
-	unsigned int HEIGHT = 1080;
+	unsigned int WIDTH = 1800;
+	unsigned int HEIGHT = 1000;
 
 	bool showPanel = false;
 	bool panelDragActive = false;
     bool wasPriorFirstPerson = false;
     bool firstPersonLookingAround = false;  
-    glm::vec3 savedFirstPersonFront;  
-	glm::mat4 lastRenderView;
-    glm::mat4 lastRenderProj;
+    glm::vec3 savedFirstPersonFront; 
+	glm::mat4 view;
+	glm::mat4 projection;
 	int current_width, current_height;
+	bool framebufferResized = false;
 
 	UIPanel* panel;
 	LightManager lightManager;
-	
 	
     
     
@@ -92,7 +91,6 @@ private:
 	bool firstMouse = true;
 	float speed = 8.0f;
 	float blurIntensity = 0.0f, edgeDetectIntensity = 0.0f, invertIntensity = 0.0f, grayIntensity = 0.0f, sharpenIntensity = 0.0f;
-	
 
 	// bezier curve data
 	std::vector<Vertex> upperCurvePoints = {

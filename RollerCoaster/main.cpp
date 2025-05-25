@@ -56,6 +56,8 @@ void resizedWindow(GLFWwindow* window, int width, int height) {
     app->current_width = width;   
     app->current_height = height; 
 
+    app->framebufferResized = true;
+
 }
 void handleMouseMovement(GLFWwindow* window, double xpos, double ypos) {
 	int current_width, current_height;

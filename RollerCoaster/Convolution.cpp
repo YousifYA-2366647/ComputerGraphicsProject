@@ -115,3 +115,18 @@ void Convolution::draw(Shader* shader, float intensity) {
 void Convolution::bindBuffer() {
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 }
+
+void Convolution::resize(unsigned int newWidth, unsigned int newHeight) {
+    if (newWidth == screenWidth && newHeight == screenHeight) return;
+
+    screenWidth = newWidth;
+    screenHeight = newHeight;
+
+    if (VAO) glDeleteVertexArrays(1, &VAO);
+    if (VBO) glDeleteBuffers(1, &VBO);
+    if (FBO) glDeleteFramebuffers(1, &FBO);
+    if (textureColorBuffer) glDeleteTextures(1, &textureColorBuffer);
+    if (RBO) glDeleteRenderbuffers(1, &RBO);
+
+    setupConvolution();
+}

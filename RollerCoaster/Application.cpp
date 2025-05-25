@@ -108,17 +108,28 @@ void Application::runWindow()
 	float upperCurveLength = upperCurve->lookupTable.back().arcLength;
 	float lowerCurveLength = lowerCurve->lookupTable.back().arcLength;
 	glm::vec3 cameraPos = firstPersonView ? firstPersonCamera.Position : globalCamera.Position;
-	glm::mat4 currentRenderView;
-	glm::mat4 currentRenderProj;
 	cartObject->modelShader->use();
 	cartObject->modelShader->setVec3("viewPos", cameraPos);
 
 	// === CREATE BLUR EFFECT ===
 	Convolution *convolutor = new Convolution(current_width, current_height); 
 
+	projection = glm::perspective(glm::radians(
+		firstPersonView ? 50.0f : globalCamera.Zoom
+	), static_cast<float>(current_width) / current_height, 0.1f, 200.0f);
+
 	// Main rendering loop
 	while (!glfwWindowShouldClose(window))
 	{
+		int actual_width, actual_height;
+		glfwGetFramebufferSize(window, &actual_width, &actual_height);
+		glViewport(0, 0, actual_width, actual_height);
+
+		if (framebufferResized) {
+			convolutor->resize(actual_width, actual_height);
+			framebufferResized = false;
+		}
+
 		glfwGetFramebufferSize(window, &current_width, &current_height);
 		currentTime = glfwGetTime();
 		float deltaTime = currentTime - lastFrameTime;
@@ -128,7 +139,6 @@ void Application::runWindow()
 		processInput(deltaTime);
 
 		// CAMERA SWITCHING LOGIC
-		glm::mat4 view;
 		glm::vec3 cameraPos;
 		if (firstPersonView)
 		{
@@ -158,32 +168,30 @@ void Application::runWindow()
 			firstPersonLookingAround = false;
 		}
 
-		glm::mat4 projection;
-        float aspect_ratio = static_cast<float>(current_width) / current_height;
-        
-        if (!firstPersonView) {
-            projection = glm::perspective(glm::radians(globalCamera.Zoom), aspect_ratio, 0.1f, 200.0f);
-        } else {
-            projection = glm::perspective(glm::radians(50.0f), aspect_ratio, 0.1f, 200.0f);
-        }
-		currentRenderView = view;
-		currentRenderProj = projection;
-		lastRenderView = view;
-		lastRenderProj = projection;
 		// Give the window a background color
 		convolutor->bindBuffer();
 		glEnable(GL_DEPTH_TEST); // Enable depth test again
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		upperCurve->setView(view);
-		upperCurve->setProjection(projection);
 		lowerCurve->setView(view);
-		lowerCurve->setProjection(projection);
 
 		cartObject->setView(view);
-		cartObject->setProjection(projection);
 		terrainObject->setView(view);
+
+		float aspect_ratio = static_cast<float>(current_width) / current_height;
+		projection = glm::perspective(glm::radians(
+			firstPersonView ? 50.0f : globalCamera.Zoom
+		), aspect_ratio, 0.1f, 200.0f);
+
+		upperCurve->setProjection(projection);
+		lowerCurve->setProjection(projection);
+
+		cartObject->setProjection(projection);
 		terrainObject->setProjection(projection);
+		if (panel) panelShader->setMat4("projection", projection);
+
 		upperCurve->Draw();
 		lowerCurve->Draw();
 
