@@ -1,120 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+      <UniqueIdentifier>{b863e997-ec94-4f77-9dc9-4c6057800dac}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Shader Files">
-      <UniqueIdentifier>{b92b8af4-a5e6-45e8-b1ae-60ac9bbe927e}</UniqueIdentifier>
+      <UniqueIdentifier>{029b9c10-10c4-49e7-8b06-3dae0bce659f}</UniqueIdentifier>
+      <Extensions>frag;vert</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{18c27b2e-a11c-4ad7-9f98-69c81212938a}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{f7558421-9acd-42ef-b721-a0889f3bdc9b}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="curveVertexShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="curveFragmentShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="cartVertexShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="cartFragmentShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="UIPanelShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="UIPanelShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="panelFragmentShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="panelVertexShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="terrainVertexShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="terrainFragmentShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="skyBoxVertexShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="skyBoxFragmentShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="blur.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="edge.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="lightShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="lightShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="screenFragmentShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="screenVertexShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="grayScale.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="invert.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="sharpen.frag">
-    <None Include="chromaKeyFragmentShader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="chromaVertexShader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="glad.c">
+    <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BezierCurve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vertex.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Cart.cpp">
+    <ClCompile Include="Building.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Terrain.cpp">
+    <ClCompile Include="Cart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIPanel.cpp">
+    <ClCompile Include="Convolution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
+    <ClCompile Include="ChromaKey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SkyBox.cpp">
@@ -123,39 +61,51 @@
     <ClCompile Include="stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ModelLoader.cpp">
+    <ClCompile Include="Terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Building.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ChromaKey.cpp">
+    <ClCompile Include="UIPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BezierCurve.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cart.h">
+    <ClInclude Include="Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="arcLengthEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BezierCurve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Building.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Convolution.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChromaKey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Terrain.h">
@@ -164,26 +114,79 @@
     <ClInclude Include="UIPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Application.h">
+    <ClInclude Include="vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SkyBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Building.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Convolution.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ChromaKey.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="blur.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="cartFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="cartVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="chromaKeyFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="chromaVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="curveFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="edge.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="grayScale.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="invert.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="lightShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="lightShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="panelFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="panelVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="screenFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="screenVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="sharpen.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="skyBoxFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="skyBoxVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="terrainFragmentShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="terrainVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="UIPanelShader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="UIPanelShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="curveVertexShader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
