@@ -15,7 +15,11 @@ public:
 	float size = 1.0f;
 	TrackPiece(const std::string& path);
 	~TrackPiece();
+
+	// Draws the trackpieces along the bezier curve
 	void Draw();
+
+	// Setters
 	void setModel(glm::mat4& newModel);
 	void setView(glm::mat4& newView);
 	void setProjection(glm::mat4& newProjection);

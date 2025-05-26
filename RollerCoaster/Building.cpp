@@ -5,6 +5,7 @@ Building::Building(const std::string& path) {
 	useCustomModel = true;
 
 	if (!modelLoader->loadModel(path)) {
+        // Use a cubeoid if the model couldn't be loaded
 		useCustomModel = false;
 
         m_vertices = {
@@ -35,6 +36,7 @@ Building::Building(const std::string& path) {
         };
 	}
     else {
+        // Else just use the found vertices and indices
         m_vertices = modelLoader->getVertices();
         m_indices = modelLoader->getIndices();
     }

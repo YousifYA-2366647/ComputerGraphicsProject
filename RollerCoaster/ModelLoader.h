@@ -15,7 +15,11 @@ class ModelLoader
 {
 public:
     ModelLoader(const std::string& path);
+
+    // Loads model from the given path
     bool loadModel(const std::string& path);
+
+    // Getters for the loaded mesh
     std::vector<Vertex> getVertices();
     std::vector<unsigned int> getIndices();
 private:

@@ -1,41 +1,5 @@
 #include "Cart.h"
 
-Cart::Cart() {
-    useCustomModel = false;
-
-    m_vertices = {
-        // Position                             // Color
-        {glm::vec3(0.3f, 0.2f, 0.2f),          glm::vec3(0.0f, 0.5f, 0.0f)},    // Left Bottom Front
-        {glm::vec3(-0.3f, 0.2f, 0.2f),         glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Bottom Back
-        {glm::vec3(0.3f, -0.2f, 0.2f),         glm::vec3(0.0f, 0.5f, 0.0f)},    // Left Top Front
-        {glm::vec3(-0.3f, -0.2f, 0.2f),        glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Top Back
-        {glm::vec3(0.3f, 0.2f, -0.2f),         glm::vec3(0.0f, 0.5f, 0.0f)},    // Right Bottom Front
-        {glm::vec3(-0.3f, 0.2f, -0.2f),        glm::vec3(0.0f, 0.5f, 0.5f)},    // Right Bottom Back
-        {glm::vec3(0.3f, -0.2f, -0.2f),        glm::vec3(0.0f, 0.5f, 0.0f)},    // Right Top Front
-        {glm::vec3(-0.3f, -0.2f, -0.2f),       glm::vec3(0.0f, 0.5f, 0.5f)},    // Right Top Back
-    };
-
-    m_indices = {
-        0, 1, 3,
-        0, 2, 3,
-        0, 2, 4,
-        2, 4, 6,
-        4, 5, 6,
-        5, 6, 7,
-        1, 5, 7,
-        1, 3, 7,
-        2, 3, 6,
-        3, 6, 7,
-        0, 1, 4,
-        1, 4, 5
-    };
-
-    modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f, 0.1f, 0.1f) * size);
-
-    setupCart();
-}
-
 Cart::Cart(const std::string& path) {
     useCustomModel = true;
     modelLoader = new ModelLoader(path);
@@ -44,7 +8,7 @@ Cart::Cart(const std::string& path) {
         std::cerr << "Failed to load model from path: " << path << ". Using default cart model instead." << std::endl;
         useCustomModel = false;
 
-        // Set up the default cart vertices and indices (same as in the default constructor)
+        // Set up the default cart vertices and indices
         m_vertices = {
             // Position                             // Color
             {glm::vec3(0.3f, 0.2f, 0.2f),          glm::vec3(0.0f, 0.5f, 0.5f)},    // Left Bottom Front
@@ -108,6 +72,8 @@ void Cart::Draw() {
 }
 
 void Cart::Move(float distanceAlongCurve, BezierCurve& currentCurve) {
+    // Move the cart along the curve
+
     float curveLength = currentCurve.lookupTable.back().arcLength;
     glm::vec3 position = currentCurve.lookupTable.back().arcVertex.Position;
     glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f);

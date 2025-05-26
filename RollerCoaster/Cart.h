@@ -21,11 +21,16 @@ class Cart
 public:
     Shader* modelShader;
     float size = 8.0f;
-    Cart();
     Cart(const std::string& path);
     ~Cart();
+    
+    // Draw cart to the world
     void Draw();
+
+    // Move cart on the track
     void Move(float distanceAlongCurve, BezierCurve& currentCurve);
+
+    // Setters and Getters
     glm::mat4 getModel();
     void setModel(glm::mat4& model);
     void setView(glm::mat4& view);

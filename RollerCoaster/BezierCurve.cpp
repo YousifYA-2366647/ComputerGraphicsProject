@@ -7,6 +7,7 @@ BezierCurve::BezierCurve(std::vector<Vertex> controlPoints) {
 	trackPiece = new TrackPiece("model/trackModel.glb");
 	useCustomModel = true;
 
+	// Check if the track piece was loaded correctly
 	if (!trackPiece->loadedCorrectly) {
 		useCustomModel = false;
 	}
@@ -30,11 +31,13 @@ void BezierCurve::Draw() {
 		glDrawArrays(GL_LINE_STRIP, 0, lookupTable.size());
 	}
 	else {
-		DrawTrackPieces(0.15f);
+		// Draw the single track piece multiple times along the curve with the given spacing
+		DrawTrackPieces(0.1f);
 	}
 }
 
 void BezierCurve::setupCurve() {
+	// Calculate the trajectory of the Bezier curve
 	int steps = 1000;
 	float totalLength = 0.0f;
 	glm::vec3 prevPoint = calculateBezierPoint(0.0f);
@@ -62,6 +65,8 @@ void BezierCurve::setupCurve() {
 		vertexData.push_back(entry.arcVertex);
 	}
 
+	// Load the results into the buffer objects
+
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
@@ -80,15 +85,18 @@ void BezierCurve::setupCurve() {
 
 	glBindVertexArray(0);
 
+	// transform the model to your liking
 	curveModel = glm::rotate(curveModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	curveModel = glm::scale(curveModel, glm::vec3(15.0f, 10.0f, 15.0f));
 	curveModel = glm::translate(curveModel, glm::vec3(-2.0f, 0.0f, -2.0f));
   
+	// Set the model in the shader
 	curveShader->use();
 	curveShader->setMat4("model", curveModel);
 }
 
 glm::vec3 BezierCurve::calculateBezierPoint(float sample) {
+	// Calculates B(t) at a certain t with 0 <= t <= 1
 	int n = controlPoints.size() - 1;
 	glm::vec3 result = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -101,6 +109,7 @@ glm::vec3 BezierCurve::calculateBezierPoint(float sample) {
 }
 
 glm::vec3 BezierCurve::calculateBezierColor(float t) {
+	// Only necessary for if the track model is not used, makes the curve line a gradient from the colors that were given in the control points
 	int n = controlPoints.size() - 1;
 	glm::vec3 result = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -113,6 +122,7 @@ glm::vec3 BezierCurve::calculateBezierColor(float t) {
 }
 
 glm::vec3 BezierCurve::calculateBezierDerivative(float t) {
+	// Calculates B'(t) to get the speed and direction that the cart on the track needs to use
 	int n = controlPoints.size() - 1;
 	glm::vec3 result(0.0f);
 
@@ -127,6 +137,7 @@ glm::vec3 BezierCurve::calculateBezierDerivative(float t) {
 }
 
 int BezierCurve::combination(int n, int r) {
+	// Calculates C(n, r)
 	if (r > n) {
 		return 0;
 	}
@@ -137,6 +148,7 @@ int BezierCurve::combination(int n, int r) {
 }
 
 int BezierCurve::factorial(int n) {
+	// Calculates n!
 	if (n <= 1) {
 		return 1;
 	}
@@ -148,6 +160,7 @@ int BezierCurve::factorial(int n) {
 }
 
 float BezierCurve::getTotalLength() const {
+	// Returns the length of the Bezier curve, needed to have a constant speed for the cart
 	return lookupTable.back().arcLength;
 }
 
@@ -174,6 +187,7 @@ void BezierCurve::setProjection(glm::mat4& newProjection) {
 }
 
 void BezierCurve::DrawTrackPieces(float spacing) {
+	// Draw the track piece multiple times along the curve with the given spacing
 	float totalLength = getTotalLength();
 	float distance = 0.0f;
 

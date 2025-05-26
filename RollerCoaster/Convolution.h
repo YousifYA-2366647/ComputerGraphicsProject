@@ -11,14 +11,20 @@ class Convolution
 public:
 	Convolution(unsigned int screenWidth, unsigned int screenHeight);
 	~Convolution();
+
+	// Post processing effects
 	void EdgeDetect(float intensity);
 	void Blur(float intensity);
 	void Inverse(float intensity);
 	void GrayScale(float intensity);
 	void Sharpen(float intensity);
 	void Bloom(float threshold, float blurIntensity, int blurPasses = 10);
+
+	// Framebuffer binders
 	void bindBuffer();
 	void bindHDR();
+
+	// Resize screen quad when window resizes
 	void resize(unsigned int newWidth, unsigned int newHeight);
 private:
 	Shader* blurShader;

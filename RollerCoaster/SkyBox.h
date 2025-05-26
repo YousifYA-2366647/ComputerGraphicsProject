@@ -15,7 +15,11 @@ public:
 
 	SkyBox();
 	~SkyBox();
+
+	// Draws the skybox
 	void Draw(glm::mat4 view, glm::mat4 projection);
+
+	// Load cubemap from a list of paths to images
 	unsigned int loadCubeMap(std::vector<std::string> faces);
 private:
 	unsigned int VAO, VBO;

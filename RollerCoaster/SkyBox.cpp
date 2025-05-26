@@ -1,6 +1,7 @@
 #include "SkyBox.h"
 
 SkyBox::SkyBox() {
+    // Paths to the six images
 	std::vector<std::string> faces = {
         "model/Yokohama3/posx.jpg",
         "model/Yokohama3/negx.jpg",
@@ -67,6 +68,7 @@ SkyBox::~SkyBox() {
 }
 
 unsigned int SkyBox::loadCubeMap(std::vector<std::string> faces) {
+    // Load the cubemap texture for the skybox
 	unsigned int textureId;
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);

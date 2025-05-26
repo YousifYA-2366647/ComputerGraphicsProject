@@ -12,6 +12,7 @@ Convolution::Convolution(unsigned int screenWidth, unsigned int screenHeight) : 
          1.0f,  1.0f,  1.0f, 1.0f
     };
 
+    // Setup all the shaders
     edgeShader = new Shader("screenVertexShader.vert", "edge.frag");
     blurShader = new Shader("screenVertexShader.vert", "blur.frag");
     invertShader = new Shader("screenVertexShader.vert", "invert.frag");
@@ -46,7 +47,7 @@ Convolution::~Convolution() {
 }
 
 void Convolution::setupConvolution() {
-    // === CREATE REGULAR FBO FIRST ===
+    // Create regular FBO first
     glGenFramebuffers(1, &FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
@@ -70,7 +71,7 @@ void Convolution::setupConvolution() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // unbind
 
-    // === CREATE HDR FBO FOR BLOOM ===
+    // Create HDR FBO for bloom
     glGenFramebuffers(1, &hdrFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 
@@ -88,7 +89,7 @@ void Convolution::setupConvolution() {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0);
     }
 
-    // Tell OpenGL which color attachments we'll use for rendering
+    // Tell OpenGL which color attachments will be uses for rendering
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glDrawBuffers(2, attachments);
 
@@ -172,7 +173,7 @@ void Convolution::bindBuffer() {
 
 void Convolution::bindHDR() {
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-    // Make sure we're writing to both color attachments
+    // Make sure both color attachments are being written to
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glDrawBuffers(2, attachments);
 }
@@ -246,7 +247,7 @@ void Convolution::Bloom(float threshold, float blurIntensity, int blurPasses) {
         glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Progressive blur - each pass gets stronger
+        // Blur gets stronger at each pass to decrease amount of needed passes
         // Better for performance
         float progressiveBlur = blurIntensity * (1.0f + i * 0.5f);
 
