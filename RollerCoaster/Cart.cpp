@@ -96,7 +96,7 @@ void Cart::Move(float distanceAlongCurve, BezierCurve& currentCurve) {
             glm::vec3 interpPos = glm::mix(a.arcVertex.Position, b.arcVertex.Position, f);
 
             glm::vec4 worldPos = currentCurve.getModel() * glm::vec4(interpPos, 1.0f);
-            position = glm::mix(this->position, glm::vec3(worldPos), 0.1f);
+            position = glm::mix(this->position, glm::vec3(worldPos), 0.5f);
 
             // Calculate the direction in which the cart has to look
             float t = glm::mix(a.t, b.t, f);
