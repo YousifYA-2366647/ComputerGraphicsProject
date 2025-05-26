@@ -14,7 +14,7 @@ struct Light {
     float quadratic;
 };
 
-// Maximum aantal lichtbronnen
+// Maximum aantal lichtbronnen voor nu
 #define MAX_LIGHTS 10
 uniform Light lights[MAX_LIGHTS];
 uniform int numLights;

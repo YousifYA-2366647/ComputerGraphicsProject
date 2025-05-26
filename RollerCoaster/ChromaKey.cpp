@@ -1,7 +1,7 @@
 #include "ChromaKey.h"
 #include <iostream>
 #include "stb_image.h"
-
+//constrcutor
 ChromaKeyPictureFrame::ChromaKeyPictureFrame(const std::string& imagePath) {
     shader = new Shader("chromaVertexShader.vert", "chromaKeyFragmentShader.frag");
     
@@ -9,14 +9,14 @@ ChromaKeyPictureFrame::ChromaKeyPictureFrame(const std::string& imagePath) {
     
     loadTexture(imagePath);
 }
-
+// destructor
 ChromaKeyPictureFrame::~ChromaKeyPictureFrame() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteTextures(1, &texture);
     delete shader;
 }
-
+// quad setup 
 void ChromaKeyPictureFrame::setupQuad() {
     // Screen-aligned quad vertices
     float quadVertices[] = {
@@ -40,7 +40,7 @@ void ChromaKeyPictureFrame::setupQuad() {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 }
-
+// texture loading
 void ChromaKeyPictureFrame::loadTexture(const std::string& path) {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -72,7 +72,7 @@ void ChromaKeyPictureFrame::loadTexture(const std::string& path) {
     
     stbi_image_free(data);
 }
-
+// Draw de chroma key overlay
 void ChromaKeyPictureFrame::Draw() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

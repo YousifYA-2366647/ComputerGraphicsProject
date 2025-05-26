@@ -49,8 +49,8 @@ public:
 	bool showChromaKey = false; 
 
 	/// window settings
-	unsigned int WIDTH = 1800;
-	unsigned int HEIGHT = 1000;
+	unsigned int WIDTH = 1920;
+	unsigned int HEIGHT = 1080;
 
 	// UI panel settings
 	bool showPanel = false;

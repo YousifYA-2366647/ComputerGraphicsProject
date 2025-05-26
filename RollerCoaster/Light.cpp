@@ -5,6 +5,7 @@ LightManager::LightManager() {
     lightShader = nullptr;
     
 }
+//use shader 
 void LightManager::initialize() {
     if (!lightShader) {
         lightShader = new Shader("lightShader.vert", "lightShader.frag");
@@ -16,7 +17,7 @@ LightManager::~LightManager() {
     glDeleteVertexArrays(1, &lightVAO);
     glDeleteBuffers(1, &lightVBO);
 }
-
+// lights adding -> manager
 void LightManager::addLight(const Light& light) {
     lights.push_back(light);
 }
@@ -100,7 +101,7 @@ void LightManager::drawLights(const glm::mat4& view, const glm::mat4& projection
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 }
-
+// Apply lighting to the shader
 void LightManager::applyLighting(Shader* targetShader, const glm::vec3& viewPos) {
     targetShader->use();
     targetShader->setVec3("viewPos", viewPos);

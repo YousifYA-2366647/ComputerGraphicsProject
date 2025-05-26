@@ -73,6 +73,9 @@
     <ClCompile Include="vertex.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="LightHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -121,6 +124,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TrackPiece.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightHolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
