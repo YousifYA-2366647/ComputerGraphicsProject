@@ -1,7 +1,7 @@
 #include "Application.h"
 
 // Create a window with the given width and height
-Application::Application() : panel(nullptr), chromaKeyPictureFrame(nullptr)
+Application::Application() : panel(nullptr), chromaKeyPictureFrame(nullptr), projection(glm::mat4(1.0f)), savedFirstPersonFront(glm::vec3(1.0f)), view(glm::mat4(1.0f))
 {
 	window = glfwCreateWindow(WIDTH, HEIGHT, "Roller Coaster", NULL, NULL);
 
@@ -24,6 +24,8 @@ Application::Application() : panel(nullptr), chromaKeyPictureFrame(nullptr)
 		glfwTerminate();
 		std::exit(-2);
 	}
+
+	// Calculate window size
 	int actual_width, actual_height;
     glfwGetFramebufferSize(window, &actual_width, &actual_height);
 	printf("Framebuffer size: %d x %d\n", actual_width, actual_height);
@@ -32,35 +34,123 @@ Application::Application() : panel(nullptr), chromaKeyPictureFrame(nullptr)
     current_width = actual_width;
     current_height = actual_height;
   
-    lightManager.addLight(Light(
-        glm::vec3(-4.0f, -16.0f, -40.0f),   // positie 
-        glm::vec3(0.0f, 1.0f, 0.0f),   // groene kleur
-        1.0f,                          // constant attenuatie
-        0.09f,                         // lineaire attenuatie
-        0.032f                         // kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
-    ));
-    
-    lightManager.addLight(Light(
-        glm::vec3(-4.0f, -16.0f, -35.0f), // positie 
-        glm::vec3(1.0f, 0.6f, 0.2f),   // oranje kleur
-        1.0f,                          // constant attenuatie
-        0.09f,                        // lineaire attenuatie
-        0.032f                        // kwadratische attenuatie
-    ));
-    
-    lightManager.addLight(Light(
-        glm::vec3(-1.0f, 3.0f, -10.0f), // positie bij de camera
-        glm::vec3(1.0f, 1.0f, 1.0f),    // witte kleur
-        1.0f,                           // constant attenuatie
-        0.09f,                          // lineaire attenuatie
-        0.032f                          // kwadratische attenuatie
-    ));
+	// Add lights
+
+	struct LightInfo {
+		glm::vec3 Position;
+		glm::vec3 Color;
+		bool shouldFlip;
+		float constantAttentuation;
+		float linearAttentuation;
+		float quadraticAttentuation;
+	};
+
+	std::vector<LightInfo> information = {
+		// Green light
+		{
+			glm::vec3(-4.0f, -16.0f, -46.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f),
+			false,
+			1.0f,
+			0.09f,
+			0.0032f
+		},
+
+		// Orange light
+		{
+			glm::vec3(-4.0f, -16.0f, -33.0f),
+			glm::vec3(1.0f, 0.2f, 0.6f),
+			true,
+			1.0f,
+			0.09f,
+			0.0032f
+		},
+
+		// Purple Light
+		{
+			glm::vec3(-3.0f, -12.0f, -33.0f),
+			glm::vec3(0.3f, 0.2f, 0.8f),
+			true,
+			1.0f,
+			0.09f,
+			0.0032f
+		},
+
+		// White light
+		{
+			glm::vec3(-1.0f, 3.0f, -11.2f),
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			false,
+			1.0f,
+			0.04f,
+			0.002f
+		},
+
+		// Red light
+		{
+			glm::vec3(5.0f, 27.0f, 18.1f),
+			glm::vec3(1.0f, 0.0f, 0.0f),
+			true,
+			1.0f,
+			0.07f,
+			0.0025f
+		},
+
+		// Green light
+		{
+			glm::vec3(-4.0f, 27.0f, 18.1f),
+			glm::vec3(0.0f, 1.0f, 0.0f),
+			true,
+			1.0f,
+			0.04f,
+			0.0025f
+		},
+
+		// Blue light
+		{
+			glm::vec3(0.5f, 27.0f, 18.1f),
+			glm::vec3(0.0f, 0.0f, 1.0f),
+			true,
+			1.0f,
+			0.07f,
+			0.0025f
+		},
+
+		// Strong yellow light
+		{
+			glm::vec3(-10.0f, 68.0f, -11.2f),
+			glm::vec3(1.0f, 1.0f, 0.0f),
+			false,
+			1.0f,
+			0.01f,
+			0.001f
+		},
+	};
+
+	for (int i = 0; i < information.size(); i++) {
+
+		lightManager.addLight(Light(
+			information[i].Position,						// positie 
+			information[i].Color,							// kleur
+			information[i].constantAttentuation,			// constant attenuatie
+			information[i].linearAttentuation,				// lineaire attenuatie
+			information[i].quadraticAttentuation			// kwadratische attenuatie (attenuatie is licht verzwakking naar mate afstand)
+		));
+
+		LightHolder* lightHolder = new LightHolder(information[i].Position, information[i].shouldFlip);
+
+		lightHolders.push_back(lightHolder);
+	}
 }
 
 Application::~Application()
 {
 	delete panel;
 	delete chromaKeyPictureFrame;
+	for (int i = 0; i < lightHolders.size(); i++) {
+		delete lightHolders[i];
+	}
+	lightHolders.clear();
 }
 
 // Runs a loop that keeps rendering the given window
@@ -68,20 +158,21 @@ void Application::runWindow()
 {
 	int current_width, current_height;
 	glfwGetFramebufferSize(window, &current_width, &current_height);
-	// Create a shader for the curves
+	// Create all necessary objects for the world
+	// Create UI panel
 	Shader *panelShader = new Shader("panelVertexShader.vert", "panelFragmentShader.frag");
 	lightManager.initialize();
 	chromaKeyPictureFrame = new ChromaKeyPictureFrame("model/camera_frame.png");
 	panel = new UIPanel(glm::vec3(0, 2, 0), glm::vec2(3.0f, 2.0f), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0));
 	panel->visible = true;
 	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.7f), glm::vec2(0.8f, 0.25f), [this]()
-										   { firstPersonView = !firstPersonView; }));
+										   { if (showPanel) firstPersonView = !firstPersonView; }));
 
 	panel->elements.push_back(new UIButton(glm::vec2(0.1f, 0.4f), glm::vec2(0.30f, 0.15f), [this]()
-										   { speed = std::max(0.1f, speed - 0.5f); }));
+										   {  if (showPanel) speed = std::max(0.1f, speed - 0.5f); }));
 
 	panel->elements.push_back(new UIButton(glm::vec2(0.6f, 0.4f), glm::vec2(0.30f, 0.15f), [this]()
-										   { speed = std::min(10.0f, speed + 0.5f); }));
+										   { if (showPanel) speed = std::min(10.0f, speed + 0.5f); }));
 	/// Create bezier curves
 	BezierCurve *upperCurve = new BezierCurve(upperCurvePoints);
 
@@ -90,8 +181,10 @@ void Application::runWindow()
 	// Create cart model
 	Cart *cartObject = new Cart(std::string("model/rollerCoasterModel.glb"));
 
+	// Create Terrain
 	Terrain *terrainObject = new Terrain();
 
+	// Create Skybox
 	SkyBox *skybox = new SkyBox();
 
 	glEnable(GL_DEPTH_TEST);
@@ -102,6 +195,7 @@ void Application::runWindow()
 	float currentTime = glfwGetTime();
 	lastFrameTime = currentTime;
 
+	// Variables needed to move the cart
 	bool onUpper = true;
 
 	float distanceAlongCurve = 0.0f;
@@ -111,9 +205,10 @@ void Application::runWindow()
 	cartObject->modelShader->use();
 	cartObject->modelShader->setVec3("viewPos", cameraPos);
 
-	// === CREATE BLUR EFFECT ===
+	// Create convolutor for post processing effects
 	Convolution *convolutor = new Convolution(current_width, current_height); 
 
+	// Set projection
 	projection = glm::perspective(glm::radians(
 		firstPersonView ? 50.0f : globalCamera.Zoom
 	), static_cast<float>(current_width) / current_height, 0.1f, 200.0f);
@@ -121,6 +216,7 @@ void Application::runWindow()
 	// Main rendering loop
 	while (!glfwWindowShouldClose(window))
 	{
+		// Get the current size of the window to update the screen quads
 		int actual_width, actual_height;
 		glfwGetFramebufferSize(window, &actual_width, &actual_height);
 		glViewport(0, 0, actual_width, actual_height);
@@ -130,6 +226,7 @@ void Application::runWindow()
 			framebufferResized = false;
 		}
 
+		// Calculate the time between frames
 		glfwGetFramebufferSize(window, &current_width, &current_height);
 		currentTime = glfwGetTime();
 		float deltaTime = currentTime - lastFrameTime;
@@ -168,17 +265,20 @@ void Application::runWindow()
 			firstPersonLookingAround = false;
 		}
 
-		// Give the window a background color
+		// Bind the framebuffer that is needed at this moment
 		if (bloomBlurIntensity) {
 			convolutor->bindHDR();
 		}
 		else {
 			convolutor->bindBuffer();
 		}
-		glEnable(GL_DEPTH_TEST); // Enable depth test again
+
+		// Enable depth test and give the background a color
+		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// Set the view and projection of the objects that will be rendered
 		upperCurve->setView(view);
 		lowerCurve->setView(view);
 
@@ -197,10 +297,32 @@ void Application::runWindow()
 		terrainObject->setProjection(projection);
 		if (panel) panelShader->setMat4("projection", projection);
 
+		for (int i = 0; i < lightHolders.size(); i++) {
+			lightHolders[i]->setView(view);
+			lightHolders[i]->setProjection(projection);
+		}
+
+		// Apply lighting to the objects that should be affected
+		lightManager.applyLighting(cartObject->modelShader, cameraPos);
+		std::vector<Shader*> shaders = terrainObject->getBuildingShaders();
+		for (Shader* shader : shaders) {
+			lightManager.applyLighting(shader, cameraPos);
+		}
+		lightManager.applyLighting(upperCurve->getTrack()->trackShader, cameraPos);
+		lightManager.applyLighting(lowerCurve->getTrack()->trackShader, cameraPos);
+		for (int i = 0; i < lightHolders.size(); i++) {
+			lightManager.applyLighting(lightHolders[i]->getShader(), cameraPos);
+		}
+		
+		// Draw all objects
 		upperCurve->Draw();
 		lowerCurve->Draw();
 
 		terrainObject->Draw();
+
+		for (int i = 0; i < lightHolders.size(); i++) {
+			lightHolders[i]->Draw();
+		}
 
 		// Update the distance along the current curve
 		distanceAlongCurve += speed * deltaTime;
@@ -219,28 +341,12 @@ void Application::runWindow()
 		// Choose the right lookup table
 		BezierCurve *currentCurve = onUpper ? upperCurve : lowerCurve;
 
-		upperCurve->setView(view);
-		upperCurve->setProjection(projection);
-		lowerCurve->setView(view);
-		lowerCurve->setProjection(projection);
-		cartObject->setView(view);
-		cartObject->setProjection(projection);
-		terrainObject->setView(view);
-		terrainObject->setProjection(projection);
-		lightManager.applyLighting(cartObject->modelShader, cameraPos);
-		std::vector<Shader*> shaders = terrainObject->getBuildingShaders();
-		for (Shader* shader : shaders) {
-			lightManager.applyLighting(shader, cameraPos);
-		}
-		lightManager.applyLighting(upperCurve->getTrack()->trackShader, cameraPos);
-		lightManager.applyLighting(lowerCurve->getTrack()->trackShader, cameraPos);
-
 		// Move and draw the cart
 		cartObject->Move(distanceAlongCurve, *currentCurve);
 		cartObject->Draw();
 		lightManager.drawLights(view, projection);
 
-		if (panel->visible)
+		if (showPanel)
 		{
 			panel->draw(*panelShader, view, projection);
 		}
@@ -251,6 +357,7 @@ void Application::runWindow()
 			chromaKeyPictureFrame->Draw();
 		}
 
+		// Unbind the framebuffer and draw the chosen effect, or none if nothing is chosen
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glDisable(GL_DEPTH_TEST);
@@ -275,7 +382,7 @@ void Application::runWindow()
 			convolutor->Sharpen(sharpenIntensity);
 		}
 		else if (bloomBlurIntensity) {
-			convolutor->Bloom(0.2f, bloomBlurIntensity, 6);
+			convolutor->Bloom(0.2f, bloomBlurIntensity, 3);
 		}
 		else
 		{
@@ -285,7 +392,7 @@ void Application::runWindow()
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
+	// Clean all pointers up
 	delete upperCurve;
 	delete lowerCurve;
 	delete cartObject;
@@ -300,6 +407,8 @@ void Application::processInput(float deltaTime)
 {
 	int current_width, current_height;
     glfwGetFramebufferSize(window, &current_width, &current_height);
+
+	// Process effect keys
 	static bool effectKeyPressed = false;
 	bool edgeDetectPressed = glfwGetKey(window, edgeKey) == GLFW_PRESS;
 	bool blurPressed = glfwGetKey(window, blurKey) == GLFW_PRESS;
@@ -331,13 +440,19 @@ void Application::processInput(float deltaTime)
 	}
 	if (bloomPressed && !effectKeyPressed)
 	{
-		bloomBlurIntensity = (bloomBlurIntensity == 0.0f) ? 2.0f : 0.0f;
+		bloomBlurIntensity = (bloomBlurIntensity == 0.0f) ? 1.0f : 0.0f;
 	}
 	effectKeyPressed = edgeDetectPressed || blurPressed || invertPressed || grayPressed || sharpenPressed || bloomPressed;
 
+	// Toggle UI panel
 	static bool lastPanelState = false;
 	bool panelPressed = glfwGetKey(window, togglePanelKey) == GLFW_PRESS;
+	if (panelPressed && !lastPanelState) {
+		showPanel = !showPanel;
+	}
 	lastPanelState = panelPressed;
+
+	// Toggle POV
 	static bool lastSwitchState = false;
 	bool switchPressed = glfwGetKey(window, switchPOV) == GLFW_PRESS;
 	if (switchPressed && !lastSwitchState)
@@ -345,6 +460,8 @@ void Application::processInput(float deltaTime)
 		firstPersonView = !firstPersonView;
 	}
 	lastSwitchState = switchPressed;
+
+	// Drag UI panel around
 	if (panelDragActive && panel->dragging)
 	{
 		float depthSpeed = 5.0f * deltaTime;
@@ -355,6 +472,8 @@ void Application::processInput(float deltaTime)
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 			panel->dragDepth(depthSpeed);
 	}
+
+	// Toggle chroma keying
 	static bool lastChromaKeyState = false;
 	bool chromaKeyPressed = glfwGetKey(window, toggleChromaKeyKey) == GLFW_PRESS;
 	if (chromaKeyPressed && !lastChromaKeyState)
@@ -363,6 +482,7 @@ void Application::processInput(float deltaTime)
 	}
 	lastChromaKeyState = chromaKeyPressed;
 
+	// Process movement keys
 	if (!firstPersonView)
 	{
 		if (glfwGetKey(window, moveForward) == GLFW_PRESS)

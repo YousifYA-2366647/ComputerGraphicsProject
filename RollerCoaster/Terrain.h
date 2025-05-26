@@ -21,7 +21,11 @@ public:
 	Shader* terrainShader;
 	Terrain();
 	~Terrain();
+
+	// Draw the terrain along with all its buildings
 	void Draw();
+
+	// Setters and Getters
 	void setModel(glm::mat4& newModel);
 	void setView(glm::mat4& newView);
 	void setProjection(glm::mat4& newProjection);

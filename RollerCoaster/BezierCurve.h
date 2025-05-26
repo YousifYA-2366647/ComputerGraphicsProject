@@ -12,16 +12,22 @@
 class BezierCurve
 {
 public:
+	// Curve information
 	std::vector<Vertex> controlPoints;
 	std::vector<ArcLengthEntry> lookupTable;
 	Shader* curveShader;
 
 	BezierCurve(std::vector<Vertex> controlPoints);
 	~BezierCurve();
+	
+	// Draw the curve to the screen
 	void Draw();
 
+	// Calculations
 	float getTotalLength() const;
 	glm::vec3 calculateBezierDerivative(float sample);
+
+	// Setters and Getters
 	glm::mat4 getModel();
 	void setModel(glm::mat4& newModel);
 	void setView(glm::mat4& newView);
@@ -33,10 +39,14 @@ private:
 	TrackPiece* trackPiece;
 	bool useCustomModel;
 	void setupCurve();
+
+	// Calculations
 	glm::vec3 calculateBezierPoint(float sample);
 	glm::vec3 calculateBezierColor(float sample);
 	int combination(int n, int r);
 	int factorial(int n);
+
+	// Draw custom track model
 	void DrawTrackPieces(float spacing);
 };
 

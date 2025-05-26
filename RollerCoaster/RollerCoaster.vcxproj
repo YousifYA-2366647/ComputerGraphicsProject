@@ -176,6 +176,7 @@
     <ClCompile Include="ChromaKey.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightHolder.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Cart.h" />
     <ClInclude Include="Convolution.h" />
     <ClInclude Include="ChromaKey.h" />
+    <ClInclude Include="LightHolder.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Shader.h" />

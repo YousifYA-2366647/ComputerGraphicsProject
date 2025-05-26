@@ -4,7 +4,7 @@
 #include "vertex.h"
 
 #pragma once
-
+// Will be used to save the calculated results of the bezier curves
 struct ArcLengthEntry {
 	float arcLength;
 	float t;

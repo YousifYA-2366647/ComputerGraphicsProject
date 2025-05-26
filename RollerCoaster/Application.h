@@ -21,6 +21,7 @@
 #include "Light.h"
 #include "Convolution.h"
 #include "ChromaKey.h"
+#include "LightHolder.h"
 
 #pragma once
 class Application
@@ -29,30 +30,38 @@ public:
 	Application();
 	~Application();
 
+	// Window setting setters
 	void setInputMode(int mode, int value);
 	void setCursorPosCallback(GLFWcursorposfun callback);
 	void setScrollCallback(GLFWscrollfun callback);
 	void setMouseButtonCallback(GLFWmousebuttonfun callback);
 	void setFramebufferSizeCallback(GLFWframebuffersizefun callback);
 
+	// Main window loop
 	void runWindow();
+
 	// Global/free camera startposities
 	Camera globalCamera = Camera(glm::vec3(0.0f, 2.0f, 10.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f);
 	Camera firstPersonCamera = Camera(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f);
 
 	// Flag om te switchen tussen views
 	bool firstPersonView = false;
-	bool showChromaKey = true; 
+	bool showChromaKey = false; 
 
 	/// window settings
 	unsigned int WIDTH = 1800;
 	unsigned int HEIGHT = 1000;
 
+	// UI panel settings
 	bool showPanel = false;
 	bool panelDragActive = false;
+
+	// First person view settings
     bool wasPriorFirstPerson = false;
     bool firstPersonLookingAround = false;  
     glm::vec3 savedFirstPersonFront; 
+
+	// World information
 	glm::mat4 view;
 	glm::mat4 projection;
 	int current_width, current_height;
@@ -60,13 +69,14 @@ public:
 
 	UIPanel* panel;
 	LightManager lightManager;
-	
-    
-    
 private:
+	// Take input from the user
 	void processInput(float deltaTime);
+
 	GLFWwindow* window;
 	ChromaKeyPictureFrame* chromaKeyPictureFrame;
+
+	std::vector<LightHolder*> lightHolders;
   
 	// Key mapping
 	unsigned int quitKey = GLFW_KEY_ESCAPE;
@@ -86,6 +96,7 @@ private:
 	unsigned int toggleChromaKeyKey = GLFW_KEY_C;
 	unsigned int bloomKey = GLFW_KEY_K;
 
+	// Render settings
 	float lastFrameTime = 0.0f;
 	float lastX = WIDTH / 2.0f;
 	float lastY = HEIGHT / 2.0f;
@@ -93,7 +104,7 @@ private:
 	float speed = 8.0f;
 	float blurIntensity = 0.0f, edgeDetectIntensity = 0.0f, invertIntensity = 0.0f, grayIntensity = 0.0f, sharpenIntensity = 0.0f, bloomBlurIntensity = 0.0f;
 
-	// bezier curve data
+	// Bezier curve data
 	std::vector<Vertex> upperCurvePoints = {
 		// Position                                   // Color
 		{glm::vec3(0.0f, 0.0f, 0.0f),                 glm::vec3(1.0f, 1.0f, 1.0f)},

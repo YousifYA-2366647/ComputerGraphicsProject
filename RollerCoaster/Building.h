@@ -11,7 +11,11 @@ public:
 	Shader* buildingShader;
 	Building(const std::string& path);
 	~Building();
+
+	// Draw buidling to the world
 	void Draw();
+
+	// Setters
 	void scaleModel(glm::vec3 size);
 	void translateModel(glm::vec3 position);
 	void setView(glm::mat4& view);

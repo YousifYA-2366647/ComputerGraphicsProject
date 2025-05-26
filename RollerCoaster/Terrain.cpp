@@ -36,6 +36,7 @@ void Terrain::Draw() {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
+	// Draw the buildings on the plane aswell
 	for (Building* building : buildings) {
 		building->Draw();
 	}
@@ -70,6 +71,7 @@ void Terrain::setupTerrain() {
 
 	glBindVertexArray(0);
 
+	// Load the ground texture
 	std::string path = "model/Yokohama3/negy.jpg";
 
 	glGenTextures(1, &textureId);
@@ -102,6 +104,7 @@ void Terrain::setupTerrain() {
 	terrainShader->use();
 	terrainShader->setMat4("model", model);
 
+	// Create the buildings
 	std::vector<glm::vec3> positions = {
 		glm::vec3(-50.0f, 0.0f, -50.0f),
 		glm::vec3(-30.0f, 0.0f, -10.0f),

@@ -13,6 +13,7 @@ std::vector<unsigned int> ModelLoader::getIndices() {
 }
 
 bool ModelLoader::loadModel(const std::string& path) {
+    // Load the model using assimp
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path,
         aiProcess_Triangulate |
@@ -36,13 +37,13 @@ bool ModelLoader::loadModel(const std::string& path) {
 }
 
 void ModelLoader::processNode(aiNode* node, const aiScene* scene) {
-    // Process all the node's meshes (if any)
+    // Process all the node's meshes
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         processMesh(mesh, scene);
     }
 
-    // Then do the same for each of its children
+    // Do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++) {
         processNode(node->mChildren[i], scene);
     }
@@ -61,7 +62,7 @@ void ModelLoader::processMesh(aiMesh* mesh, const aiScene* scene) {
         vertex.Position.y = mesh->mVertices[i].y;
         vertex.Position.z = mesh->mVertices[i].z;
 
-        // Color (default to gray if no vertex colors)
+        // Color, default to gray if no vertex colors
         if (mesh->HasVertexColors(0)) {
             vertex.Color.r = mesh->mColors[0][i].r;
             vertex.Color.g = mesh->mColors[0][i].g;

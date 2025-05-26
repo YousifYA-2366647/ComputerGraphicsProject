@@ -30,9 +30,9 @@ void Camera::ProcessKeyboard(int direction, float deltaTime) {
     if (direction == GLFW_KEY_D)
         Position += Right * velocity;
     if (direction == GLFW_KEY_Q)
-        Position -= Up * velocity;
+        Position -= glm::vec3(0.0f, 1.0f, 0.0f) * velocity;
     if (direction == GLFW_KEY_E)
-        Position += Up * velocity;
+        Position += glm::vec3(0.0f, 1.0f, 0.0f) * velocity;
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean limitPitchx) {
