@@ -61,7 +61,7 @@ void resizedWindow(GLFWwindow* window, int width, int height) {
 }
 void handleMouseMovement(GLFWwindow* window, double xpos, double ypos) {
 	int current_width, current_height;
-    glfwGetFramebufferSize(window, &current_width, &current_height);
+    glfwGetFramebufferSize(window, &current_width, &current_height);//dynamic width and height
 	static float lastX = current_width / 2.0f;
     static float lastY = current_height / 2.0f;
     static bool firstMouse = true;
@@ -83,20 +83,16 @@ void handleMouseMovement(GLFWwindow* window, double xpos, double ypos) {
   }
 
   wasRightPressed = rightPressed;
-
   if (!rightPressed)
       return;
-
   if (firstMouse) {
       lastX = xpos;
       lastY = ypos;
       firstMouse = false;
       return; 
   }
-
   float xoffset = xpos - lastX;
   float yoffset = lastY - ypos;
-
   lastX = xpos;
   lastY = ypos;
 
@@ -106,6 +102,7 @@ void handleMouseMovement(GLFWwindow* window, double xpos, double ypos) {
   else if (!app->firstPersonView) {
       app->globalCamera.ProcessMouseMovement(xoffset, yoffset);
   }
+  //drag logic
 	if (app->panelDragActive && app->panel->dragging) {
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
@@ -139,6 +136,7 @@ void handleScrollInput(GLFWwindow* window, double xoffset, double yoffset) {
 		app->firstPersonCamera.ProcessMouseScroll((float)yoffset);
 	}
 }
+// Handle mouse clicks for picking elements in the UI panel or dragging the panel
 void handleMouseClick(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
         if (action == GLFW_PRESS && app->panel->visible) {
@@ -146,13 +144,13 @@ void handleMouseClick(GLFWwindow* window, int button, int action, int mods) {
             glfwGetCursorPos(window, &xpos, &ypos);
             
             int current_width, current_height;
-            glfwGetFramebufferSize(window, &current_width, &current_height);
-            
+            glfwGetFramebufferSize(window, &current_width, &current_height); //dynamic width and height
+            // for accurate ray casting
             glm::vec3 camPos;
             glm::mat4 view;
             glm::mat4 proj;
-            
-            float aspect_ratio = static_cast<float>(current_width) / current_height;
+            // aspect ratio 
+            float aspect_ratio = static_cast<float>(current_width) / current_height; 
             
             if (app->firstPersonView) {
                 camPos = app->firstPersonCamera.Position;
@@ -164,11 +162,11 @@ void handleMouseClick(GLFWwindow* window, int button, int action, int mods) {
                 proj = glm::perspective(glm::radians(app->globalCamera.Zoom), aspect_ratio, 0.1f, 200.0f);
             }
             
-            
+            // return rayDir from the camera position to the mouse position
             glm::vec3 rayDir = getPickingRay(xpos, ypos, current_width, current_height, view, proj, camPos);
-            
+            // start position camera and direction of the ray -> determine intersection with the panel
             int i = app->panel->pickElement(camPos, rayDir);
-            if (i == -1) {
+            if (i == -1) { // no element clicked but inside the panel
                 // Panel drag logic
                 float dotNormalRay = glm::dot(app->panel->normal, rayDir);
                 if (fabs(dotNormalRay) > 1e-6f) {
@@ -189,25 +187,23 @@ void handleMouseClick(GLFWwindow* window, int button, int action, int mods) {
         }
     }
 }
+// method to get the ray 
+//ray casting: getPickingRay -> UIPanel::pickElement -> UIPanel::contains -> UIPanel::processClick
 glm::vec3 getPickingRay(double mouseX, double mouseY, int width, int height, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& camPos) {
     
     printf("Mouse: %.2f, %.2f | Viewport: %d, %d\n", mouseX, mouseY, width, height);
-    
+    // mouse coord to ndc coords 
     float x = (2.0f * (float)mouseX) / (float)width - 1.0f;
     float y = 1.0f - (2.0f * (float)mouseY) / (float)height;
-    
-    
     glm::vec4 rayClip(x, y, -1.0f, 1.0f);
-    
     glm::mat4 invViewProj = glm::inverse(proj * view);
     glm::vec4 rayWorld = invViewProj * rayClip;
-    
     if (abs(rayWorld.w) > 1e-6f) {
         rayWorld /= rayWorld.w;
     }
     
-    
+    // Convert to world coords
     glm::vec3 rayDir = glm::normalize(glm::vec3(rayWorld) - camPos);
-    
+    // ray direction 
     return rayDir;
 }

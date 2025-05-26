@@ -108,8 +108,8 @@ void UIButton::draw(Shader& shader, const glm::mat4& panelModel) {
 }
 
 
-
-bool UIButton::isInside(const glm::vec2& current) {
+// check if button contains the current panel local position [(buttons pos relative to panel) == panel local]
+bool UIButton::contains(const glm::vec2& current) {
     return current.x >= pos.x && current.x <= pos.x + size.x &&
         current.y >= pos.y && current.y <= pos.y + size.y;
 }
@@ -122,7 +122,7 @@ void UIButton::onClick() {
 UIPanel::UIPanel(glm::vec3 pos, glm::vec2 size, glm::vec3 normal, glm::vec3 up)
     : pos(pos), size(size), normal(glm::normalize(normal)), up(glm::normalize(up)) {
 }
-
+//draw the panel and its elements
 void UIPanel::draw(Shader& shader, const glm::mat4& view, const glm::mat4& proj) {
     if (!visible) return;
     shader.use();
@@ -167,12 +167,14 @@ void UIPanel::draw(Shader& shader, const glm::mat4& view, const glm::mat4& proj)
     for (auto* el : elements) el->draw(shader, model);
 }
 
-
+// method to pick an element based on ray intersection
+// Returns the index of the clicked element, or -1 if no element was clicked
 int UIPanel::pickElement(const glm::vec3& rayStart, const glm::vec3& rayDir) {
     float dotNormalRay = glm::dot(normal, rayDir);
     if (std::abs(dotNormalRay) < 1e-6f) return 6;
     float t = glm::dot(pos - rayStart, normal) / dotNormalRay;
     if (t < 0) return -1;
+    //intersection point
     glm::vec3 hit = rayStart + t * rayDir;
     glm::vec3 right = glm::normalize(glm::cross(normal, up));
     glm::vec3 current = hit - pos;
@@ -180,18 +182,18 @@ int UIPanel::pickElement(const glm::vec3& rayStart, const glm::vec3& rayDir) {
     float y = glm::dot(current, up) / size.y + 0.5f;
    
     if (x < 0 || x > 1 || y < 0 || y > 1) return 6;
-    glm::vec2 currentPanel(x, y);
+    glm::vec2 currentPanelLocalPos(x, y);
     for (size_t i = 0; i < elements.size(); ++i) {
-
-        if (elements[i]->isInside(currentPanel))
+        // loop for elements/buttons
+        if (elements[i]->contains(currentPanelLocalPos))
         {
 			printf("Element %d clicked\n", i);
-            return int(i);
+            return int(i); // for processClick 
         }
     }
     return -1;
 }
-
+// Process click on element at the given index
 void UIPanel::processClick(int index) {
     printf("Element %d\n", (int)elements.size());
     if (index >= 0 && index < (int)elements.size()) {
@@ -207,6 +209,7 @@ void UIPanel::processClick(int index) {
 UIPanel::~UIPanel() {
     for (auto* el : elements) delete el;
 }
+// panel drag logic (use ray casting)
 // Start drag
 void UIPanel::startDrag(const glm::vec3& hitPoint) {
     dragging = true;

@@ -14,8 +14,8 @@ public:
     glm::vec3 Right;
     glm::vec3 WorldUp;
 
-    float Roty;
-    float Pitch;
+    float Roty; //y-axis rotation
+    float Pitch;// x-axis rotation
 
     float MovementSpeed;
     float MouseSensitivity;

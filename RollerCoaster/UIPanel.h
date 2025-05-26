@@ -8,9 +8,9 @@
 class UIElement {
 public:
     
-    glm::vec2 pos, size;
+    glm::vec2 pos, size; // position and size in local coordinates
     virtual void draw(Shader& shader, const glm::mat4& panelModel) = 0;
-    virtual bool isInside(const glm::vec2& local) = 0;
+    virtual bool contains(const glm::vec2& local) = 0;
     virtual void onClick() = 0;
     virtual ~UIElement() = default;
 };
@@ -20,7 +20,7 @@ public:
     std::function<void()> callback;
     UIButton(glm::vec2 pos, glm::vec2 size, std::function<void()> cb);
     void draw(Shader& shader, const glm::mat4& panelModel) override;
-    bool isInside(const glm::vec2& current) override;
+    bool contains(const glm::vec2& current) override;
     void onClick() override;
     
 

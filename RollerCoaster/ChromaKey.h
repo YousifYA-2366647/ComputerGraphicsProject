@@ -12,9 +12,9 @@ public:
     void Draw();
 
 private:
-    unsigned int VAO, VBO, texture;
+    unsigned int VAO, VBO, texture; // texture id for image
     Shader* shader;
-    void setupQuad();
+    void setupQuad();// Setup quad for image
     void loadTexture(const std::string& path);
 };
 

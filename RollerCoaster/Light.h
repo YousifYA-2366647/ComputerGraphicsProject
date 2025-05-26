@@ -10,9 +10,9 @@ class Light {
 public:
     glm::vec3 position;
     glm::vec3 color;
-    float constant;
-    float linear;
-    float quadratic;
+    float constant; // attenauatie constant
+    float linear; // lineaire attenuatie
+    float quadratic; // kwadratische attenuatie
 
     Light(glm::vec3 pos, glm::vec3 col, float cons, float lin, float quad)
         : position(pos), color(col), constant(cons), linear(lin), quadratic(quad) {
