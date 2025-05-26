@@ -108,7 +108,7 @@ void Cart::Move(float distanceAlongCurve, BezierCurve& currentCurve) {
     }
 
     // Set the results into the cart
-    this->position = position + glm::vec3(0.0f, 0.01f, 0.0f) * size;
+    this->position = position + glm::vec3(0.0f, 0.08f, 0.0f) * size;
     this->front = glm::normalize(direction) * -1.0f;
 
     glm::vec3 worldUp = glm::vec3(0.0f, -1.0f, 0.0f);
